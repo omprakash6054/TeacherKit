@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Generator | EduTools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2rem;
+        }
+        .controls-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+        }
+        .preview-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+            background: #000;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+        .input-group { margin-bottom: 1.5rem; }
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+        }
+        .input-group input[type="text"] {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 1rem;
+            border-radius: 12px;
+            color: white;
+        }
+        input[type="file"] {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            color: white;
+            border: 1px dashed var(--primary);
+        }
+        @media (max-width: 768px) {
+            .layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="tool-container">
+        <section class="hero" style="padding: 4rem 0 2rem;">
+            <h1>Meme <span class="gradient-text">Generator</span></h1>
+            <p class="hero-sub">Engage your students with educational humor.</p>
+        </section>
+
+        <div class="layout">
+            <div class="controls-card">
+                <div class="input-group">
+                    <label>Upload Image</label>
+                    <input type="file" id="image-input" accept="image/*">
+                </div>
+                <div class="input-group">
+                    <label>Top Text</label>
+                    <input type="text" id="top-text" placeholder="Top text here...">
+                </div>
+                <div class="input-group">
+                    <label>Bottom Text</label>
+                    <input type="text" id="bottom-text" placeholder="Bottom text here...">
+                </div>
+            </div>
+
+            <div class="preview-card">
+                <canvas id="meme-canvas" width="500" height="500"></canvas>
+                <button class="btn-primary" id="download-btn">
+                    <i class="fas fa-download"></i> Download Meme
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const canvas = document.getElementById('meme-canvas');
+        const ctx = canvas.getContext('2d');
+        const imageInput = document.getElementById('image-input');
+        const topTextInput = document.getElementById('top-text');
+        const bottomTextInput = document.getElementById('bottom-text');
+        const downloadBtn = document.getElementById('download-btn');
+
+        let image = null;
+
+        // Draw initial placeholder
+        ctx.fillStyle = '#18181b';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#3f3f46';
+        ctx.font = '24px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Upload an image to start', canvas.width / 2, canvas.height / 2);
+
+        function drawMeme() {
+            if (!image) return;
+
+            // Resize canvas to image
+            canvas.width = image.width;
+            canvas.height = image.height;
+
+            // Draw image
+            ctx.drawImage(image, 0, 0);
+
+            // Setup text style
+            const fontSize = Math.floor(canvas.height / 10);
+            ctx.font = `900 ${fontSize}px Impact, sans-serif`;
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = fontSize / 15;
+            ctx.textAlign = 'center';
+
+            // Top text
+            const topText = topTextInput.value.toUpperCase();
+            ctx.textBaseline = 'top';
+            ctx.fillText(topText, canvas.width / 2, 20);
+            ctx.strokeText(topText, canvas.width / 2, 20);
+
+            // Bottom text
+            const bottomText = bottomTextInput.value.toUpperCase();
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(bottomText, canvas.width / 2, canvas.height - 20);
+            ctx.strokeText(bottomText, canvas.width / 2, canvas.height - 20);
+        }
+
+        imageInput.addEventListener('change', (e) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                image = new Image();
+                image.onload = drawMeme;
+                image.src = event.target.result;
+            };
+            if (e.target.files[0]) {
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+        topTextInput.addEventListener('input', drawMeme);
+        bottomTextInput.addEventListener('input', drawMeme);
+
+        downloadBtn.addEventListener('click', () => {
+            if (!image) {
+                alert('Please upload an image first!');
+                return;
+            }
+            const link = document.createElement('a');
+            link.download = 'meme.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    </script>
+</body>
+</html>

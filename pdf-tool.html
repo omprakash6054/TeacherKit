@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Merger | EduTools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container { max-width: 800px; margin: 0 auto; padding: 2rem; text-align: center; }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+        }
+        .file-list {
+            margin: 2rem 0;
+            text-align: left;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            min-height: 100px;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+        }
+        input[type="file"] { display: none; }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="tool-container">
+        <section class="hero" style="padding: 4rem 0 2rem;">
+            <h1>PDF <span class="gradient-text">Merger</span></h1>
+            <p class="hero-sub">Combine multiple PDF handouts into a single file instantly.</p>
+        </section>
+
+        <div class="card">
+            <label for="pdf-input" class="btn-ghost" style="display: inline-block; cursor: pointer; padding: 1rem 2rem;">
+                <i class="fas fa-plus"></i> Add PDF Files
+            </label>
+            <input type="file" id="pdf-input" accept="application/pdf" multiple>
+            
+            <div class="file-list" id="file-list">
+                <div style="color: var(--text-muted); text-align: center; margin-top: 1.5rem;">No files added yet</div>
+            </div>
+
+            <button class="btn-primary" id="merge-btn" style="width: 100%; display: none;">
+                <i class="fas fa-object-group"></i> Merge PDFs
+            </button>
+            <p id="status-text" style="margin-top: 1rem; color: var(--primary); display: none;">Processing...</p>
+        </div>
+    </main>
+
+    <!-- PDF-Lib for Client-Side PDF manipulation -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        const input = document.getElementById('pdf-input');
+        const fileList = document.getElementById('file-list');
+        const mergeBtn = document.getElementById('merge-btn');
+        const statusText = document.getElementById('status-text');
+        let filesArray = [];
+
+        input.addEventListener('change', (e) => {
+            for (let i = 0; i < e.target.files.length; i++) {
+                filesArray.push(e.target.files[i]);
+            }
+            renderList();
+        });
+
+        function renderList() {
+            if (filesArray.length === 0) {
+                fileList.innerHTML = '<div style="color: var(--text-muted); text-align: center; margin-top: 1.5rem;">No files added yet</div>';
+                mergeBtn.style.display = 'none';
+                return;
+            }
+            
+            mergeBtn.style.display = filesArray.length > 1 ? 'block' : 'none';
+            fileList.innerHTML = '';
+            
+            filesArray.forEach((file, index) => {
+                const div = document.createElement('div');
+                div.className = 'file-item';
+                div.innerHTML = `
+                    <span><i class="fas fa-file-pdf" style="color: #ef4444; margin-right: 10px;"></i> ${file.name}</span>
+                    <button class="btn-ghost" style="padding: 0.5rem;" onclick="removeFile(${index})"><i class="fas fa-times"></i></button>
+                `;
+                fileList.appendChild(div);
+            });
+        }
+
+        window.removeFile = (index) => {
+            filesArray.splice(index, 1);
+            renderList();
+        };
+
+        mergeBtn.addEventListener('click', async () => {
+            if (filesArray.length < 2) return;
+            statusText.style.display = 'block';
+            statusText.textContent = 'Merging PDFs...';
+            mergeBtn.disabled = true;
+
+            try {
+                const { PDFDocument } = PDFLib;
+                const mergedPdf = await PDFDocument.create();
+
+                for (let file of filesArray) {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await PDFDocument.load(arrayBuffer);
+                    const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                    copiedPages.forEach((page) => mergedPdf.addPage(page));
+                }
+
+                const pdfBytes = await mergedPdf.save();
+                const blob = new Blob([pdfBytes], { type: "application/pdf" });
+                const url = URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'Merged_Document.pdf';
+                link.click();
+                
+                statusText.textContent = 'Merge successful!';
+                statusText.style.color = '#4ade80';
+            } catch (e) {
+                console.error(e);
+                statusText.textContent = 'Error merging files.';
+                statusText.style.color = '#ef4444';
+            }
+            mergeBtn.disabled = false;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubric Generator | EduTools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container { max-width: 1200px; margin: 0 auto; padding: 2rem; overflow-x: auto; }
+        .rubric-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+        .rubric-table th, .rubric-table td {
+            border: 1px solid var(--glass-border);
+            padding: 1rem;
+            min-width: 200px;
+            vertical-align: top;
+        }
+        .rubric-table th {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            font-weight: 700;
+        }
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: inherit;
+            resize: vertical;
+            padding: 0.5rem;
+        }
+        textarea:focus {
+            outline: 1px solid var(--primary);
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        .criteria-title { font-weight: bold; font-size: 1.1rem; min-height: 40px; }
+        
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body { background: white; color: black; }
+            .bg-canvas, nav, .hero, .print-hide { display: none !important; }
+            .tool-container { max-width: 100%; padding: 0; }
+            .rubric-table { border: 2px solid black; }
+            .rubric-table th, .rubric-table td { border: 1px solid black; color: black; }
+            textarea { color: black; }
+            textarea:focus { outline: none; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas print-hide" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav id="main-nav" class="print-hide">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="tool-container">
+        <section class="hero print-hide" style="padding: 4rem 0 2rem;">
+            <h1>Rubric <span class="gradient-text">Generator</span></h1>
+            <p class="hero-sub">Create standardized grading criteria for any task.</p>
+        </section>
+
+        <div class="controls print-hide">
+            <button class="btn-secondary" id="add-row">
+                <i class="fas fa-plus"></i> Add Criteria Row
+            </button>
+            <button class="btn-secondary" id="add-col">
+                <i class="fas fa-plus"></i> Add Level Column
+            </button>
+            <button class="btn-primary" onclick="window.print()" style="margin-left: auto;">
+                <i class="fas fa-print"></i> Print Rubric
+            </button>
+        </div>
+
+        <input type="text" placeholder="Rubric Title" style="width: 100%; font-size: 2rem; font-weight: bold; background: transparent; border: none; color: inherit; margin-bottom: 2rem; border-bottom: 2px solid var(--glass-border); padding-bottom: 0.5rem;" class="print-text-dark">
+
+        <table class="rubric-table" id="rubric">
+            <thead>
+                <tr id="header-row">
+                    <th>Criteria</th>
+                    <th><textarea class="criteria-title" style="text-align: center;">Excellent (4)</textarea></th>
+                    <th><textarea class="criteria-title" style="text-align: center;">Good (3)</textarea></th>
+                    <th><textarea class="criteria-title" style="text-align: center;">Satisfactory (2)</textarea></th>
+                    <th><textarea class="criteria-title" style="text-align: center;">Needs Improvement (1)</textarea></th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                <tr>
+                    <td><textarea class="criteria-title">Content Knowledge</textarea></td>
+                    <td><textarea placeholder="Description..."></textarea></td>
+                    <td><textarea placeholder="Description..."></textarea></td>
+                    <td><textarea placeholder="Description..."></textarea></td>
+                    <td><textarea placeholder="Description..."></textarea></td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+        const table = document.getElementById('rubric');
+        const headerRow = document.getElementById('header-row');
+        const tbody = document.getElementById('tbody');
+        const addRowBtn = document.getElementById('add-row');
+        const addColBtn = document.getElementById('add-col');
+        
+        let cols = 4;
+
+        addColBtn.addEventListener('click', () => {
+            cols++;
+            const th = document.createElement('th');
+            th.innerHTML = `<textarea class="criteria-title" style="text-align: center;">Level ${cols}</textarea>`;
+            headerRow.appendChild(th);
+
+            Array.from(tbody.rows).forEach(row => {
+                const td = document.createElement('td');
+                td.innerHTML = '<textarea placeholder="Description..."></textarea>';
+                row.appendChild(td);
+            });
+        });
+
+        addRowBtn.addEventListener('click', () => {
+            const tr = document.createElement('tr');
+            
+            const thTd = document.createElement('td');
+            thTd.innerHTML = '<textarea class="criteria-title">New Criteria</textarea>';
+            tr.appendChild(thTd);
+
+            for (let i = 0; i < cols; i++) {
+                const td = document.createElement('td');
+                td.innerHTML = '<textarea placeholder="Description..."></textarea>';
+                tr.appendChild(td);
+            }
+            tbody.appendChild(tr);
+        });
+    </script>
+</body>
+</html>

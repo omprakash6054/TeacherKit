@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Roller | EduTools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+        .dice-display {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 4rem 0;
+            flex-wrap: wrap;
+        }
+        .die {
+            width: 120px;
+            height: 120px;
+            background: white;
+            color: #18181b;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .die.rolling {
+            animation: roll 0.5s infinite;
+        }
+        @keyframes roll {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(0.9); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            75% { transform: rotate(270deg) scale(0.9); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="tool-container">
+        <section class="hero" style="padding: 4rem 0 2rem;">
+            <h1>Dice <span class="gradient-text">Roller</span></h1>
+            <p class="hero-sub">Virtual dice for classroom games and random selection.</p>
+        </section>
+
+        <div class="dice-display" id="dice-container">
+            <div class="die" id="die-1"><i class="fas fa-dice-one"></i></div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-primary" id="roll-btn" style="flex: none; min-width: 200px;">
+                <i class="fas fa-dice"></i> Roll Dice
+            </button>
+            <button class="btn-secondary" id="add-die" style="flex: none;">
+                <i class="fas fa-plus"></i> Add Die
+            </button>
+            <button class="btn-ghost" id="remove-die" style="flex: none;">
+                <i class="fas fa-minus"></i> Remove
+            </button>
+        </div>
+    </main>
+
+    <script>
+        const diceContainer = document.getElementById('dice-container');
+        const rollBtn = document.getElementById('roll-btn');
+        const addBtn = document.getElementById('add-die');
+        const removeBtn = document.getElementById('remove-die');
+
+        const diceIcons = [
+            'fa-dice-one', 'fa-dice-two', 'fa-dice-three', 
+            'fa-dice-four', 'fa-dice-five', 'fa-dice-six'
+        ];
+
+        function createDie() {
+            const die = document.createElement('div');
+            die.className = 'die';
+            die.innerHTML = '<i class="fas fa-dice-one"></i>';
+            return die;
+        }
+
+        rollBtn.addEventListener('click', () => {
+            const dice = document.querySelectorAll('.die');
+            dice.forEach(die => die.classList.add('rolling'));
+            
+            setTimeout(() => {
+                dice.forEach(die => {
+                    die.classList.remove('rolling');
+                    const roll = Math.floor(Math.random() * 6);
+                    die.innerHTML = `<i class="fas ${diceIcons[roll]}"></i>`;
+                    die.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+                });
+            }, 600);
+        });
+
+        addBtn.addEventListener('click', () => {
+            if (document.querySelectorAll('.die').length < 6) {
+                diceContainer.appendChild(createDie());
+            }
+        });
+
+        removeBtn.addEventListener('click', () => {
+            const dice = document.querySelectorAll('.die');
+            if (dice.length > 1) {
+                dice[dice.length - 1].remove();
+            }
+        });
+    </script>
+</body>
+
+</html>

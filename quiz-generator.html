@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Choice Generator | EduTools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        .controls-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .question-block {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .remove-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        input[type="text"] {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 1rem;
+            font-family: inherit;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .option-input { margin-bottom: 0 !important; }
+        
+        /* Print Styles */
+        @media print {
+            body { background: white; color: black; }
+            .bg-canvas, nav, .hero, .print-hide { display: none !important; }
+            .tool-container { max-width: 100%; padding: 0; }
+            .question-block { border: none; break-inside: avoid; margin-bottom: 2rem; background: none; }
+            input[type="text"] { border: none; border-bottom: 1px solid #ccc; border-radius: 0; color: black; background: none; }
+            .options-grid { display: block; }
+            .options-grid > div { margin-bottom: 0.5rem; }
+            .options-grid input { display: inline-block; width: auto; min-width: 200px; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas print-hide" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav id="main-nav" class="print-hide">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="tool-container">
+        <section class="hero print-hide" style="padding: 4rem 0 2rem;">
+            <h1>Quiz <span class="gradient-text">Generator</span></h1>
+            <p class="hero-sub">Create and print clean multiple choice assessments.</p>
+        </section>
+
+        <div class="controls-card print-hide" style="display: flex; justify-content: space-between; align-items: center;">
+            <button class="btn-secondary" id="add-q-btn">
+                <i class="fas fa-plus"></i> Add Question
+            </button>
+            <button class="btn-primary" onclick="window.print()">
+                <i class="fas fa-print"></i> Print Quiz
+            </button>
+        </div>
+
+        <div id="quiz-header" style="margin-bottom: 2rem;">
+            <div style="display: flex; gap: 2rem;">
+                <div style="flex: 1;">
+                    <label style="color: var(--text-muted); font-size: 0.9rem;">Quiz Title</label>
+                    <input type="text" placeholder="Enter Quiz Title" style="font-size: 1.5rem; font-weight: bold; background: transparent; border: none; border-bottom: 2px solid var(--primary); border-radius: 0; padding-left: 0;">
+                </div>
+                <div style="width: 250px;">
+                    <label style="color: var(--text-muted); font-size: 0.9rem;">Student Name</label>
+                    <input type="text" placeholder="Name:" style="background: transparent; border: none; border-bottom: 1px solid var(--glass-border); border-radius: 0;">
+                </div>
+            </div>
+        </div>
+
+        <div id="questions-container">
+            <!-- Initial Question -->
+        </div>
+    </main>
+
+    <script>
+        const container = document.getElementById('questions-container');
+        const addBtn = document.getElementById('add-q-btn');
+        let qCount = 0;
+
+        function addQuestion() {
+            qCount++;
+            const div = document.createElement('div');
+            div.className = 'question-block';
+            div.innerHTML = `
+                <button class="remove-btn print-hide" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <strong style="color: var(--primary); font-size: 1.2rem; margin-top: 0.5rem;">${qCount}.</strong>
+                    <div style="flex: 1;">
+                        <input type="text" placeholder="Enter your question here..." style="font-weight: 600;">
+                        <div class="options-grid">
+                            <div><span style="color: var(--text-muted); margin-right: 0.5rem;">A)</span><input type="text" class="option-input" placeholder="Option A"></div>
+                            <div><span style="color: var(--text-muted); margin-right: 0.5rem;">B)</span><input type="text" class="option-input" placeholder="Option B"></div>
+                            <div><span style="color: var(--text-muted); margin-right: 0.5rem;">C)</span><input type="text" class="option-input" placeholder="Option C"></div>
+                            <div><span style="color: var(--text-muted); margin-right: 0.5rem;">D)</span><input type="text" class="option-input" placeholder="Option D"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        addBtn.addEventListener('click', addQuestion);
+        
+        // Add first question automatically
+        addQuestion();
+    </script>
+</body>
+</html>

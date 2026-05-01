@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Formatter | EduTools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container { max-width: 1200px; margin: 0 auto; padding: 2rem; overflow-x: auto;}
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+        .schedule-table th, .schedule-table td {
+            border: 1px solid var(--glass-border);
+            padding: 1rem;
+            min-width: 150px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .schedule-table th {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .time-col {
+            font-weight: bold;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.2);
+            width: 120px;
+        }
+        input[type="text"] {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: white;
+            text-align: center;
+            font-family: inherit;
+            padding: 0.5rem;
+            font-size: 0.95rem;
+        }
+        input[type="text"]:focus {
+            outline: 1px solid var(--primary);
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body { background: white; color: black; }
+            .bg-canvas, nav, .hero, .print-hide { display: none !important; }
+            .tool-container { max-width: 100%; padding: 0; }
+            .schedule-table { border: 2px solid black; }
+            .schedule-table th, .schedule-table td { border: 1px solid black; color: black; }
+            input[type="text"] { color: black; }
+            input[type="text"]:focus { outline: none; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas print-hide" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav id="main-nav" class="print-hide">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="tool-container">
+        <section class="hero print-hide" style="padding: 4rem 0 2rem;">
+            <h1>Schedule <span class="gradient-text">Formatter</span></h1>
+            <p class="hero-sub">Create clean, printable class timetables.</p>
+        </section>
+
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 2rem;" class="print-hide">
+            <button class="btn-primary" onclick="window.print()">
+                <i class="fas fa-print"></i> Print Schedule
+            </button>
+        </div>
+
+        <input type="text" placeholder="Weekly Schedule Title" style="font-size: 2rem; font-weight: bold; margin-bottom: 2rem; border-bottom: 2px solid var(--glass-border); border-radius: 0; text-align: left;">
+
+        <table class="schedule-table">
+            <thead>
+                <tr>
+                    <th class="time-col">Time</th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="time-col"><input type="text" value="08:00 - 09:00"></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                </tr>
+                <tr>
+                    <td class="time-col"><input type="text" value="09:00 - 10:00"></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                </tr>
+                <tr>
+                    <td class="time-col"><input type="text" value="10:00 - 10:30"></td>
+                    <td colspan="5" style="background: rgba(255,255,255,0.05); color: var(--text-muted); font-style: italic;"><input type="text" value="Break"></td>
+                </tr>
+                <tr>
+                    <td class="time-col"><input type="text" value="10:30 - 11:30"></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                </tr>
+                <tr>
+                    <td class="time-col"><input type="text" value="11:30 - 12:30"></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                </tr>
+                <tr>
+                    <td class="time-col"><input type="text" value="12:30 - 13:30"></td>
+                    <td colspan="5" style="background: rgba(255,255,255,0.05); color: var(--text-muted); font-style: italic;"><input type="text" value="Lunch"></td>
+                </tr>
+                <tr>
+                    <td class="time-col"><input type="text" value="13:30 - 14:30"></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                    <td><input type="text" placeholder="Subject..."></td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>

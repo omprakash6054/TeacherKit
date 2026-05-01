@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Reaction Picker | EduTools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .emoji-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+        .emoji-card:hover {
+            transform: scale(1.1);
+            background: var(--primary);
+            border-color: transparent;
+        }
+        .emoji-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .emoji-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .emoji-card:hover .emoji-label {
+            color: white;
+        }
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #4ade80;
+            color: #064e3b;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="tool-container">
+        <section class="hero" style="padding: 4rem 0 2rem;">
+            <h1>Emoji Reaction <span class="gradient-text">Picker</span></h1>
+            <p class="hero-sub">Click any emoji to copy it to your clipboard for quick feedback.</p>
+        </section>
+
+        <div class="emoji-grid" id="emoji-grid">
+            <!-- Populated by JS -->
+        </div>
+    </main>
+
+    <div class="toast" id="toast">Copied to clipboard!</div>
+
+    <script>
+        const emojis = [
+            { icon: '👍', label: 'Great Job' },
+            { icon: '👎', label: 'Try Again' },
+            { icon: '⭐', label: 'Star' },
+            { icon: '💯', label: 'Perfect' },
+            { icon: '🔥', label: 'Fire' },
+            { icon: '👏', label: 'Clap' },
+            { icon: '🤔', label: 'Thinking' },
+            { icon: '💡', label: 'Idea' },
+            { icon: '🎯', label: 'Spot On' },
+            { icon: '✅', label: 'Correct' },
+            { icon: '❌', label: 'Incorrect' },
+            { icon: '❓', label: 'Question' },
+            { icon: '🎉', label: 'Celebrate' },
+            { icon: '🚀', label: 'Fast' },
+            { icon: '🧠', label: 'Smart' },
+            { icon: '👀', label: 'Look' }
+        ];
+
+        const grid = document.getElementById('emoji-grid');
+        const toast = document.getElementById('toast');
+
+        emojis.forEach(e => {
+            const card = document.createElement('div');
+            card.className = 'emoji-card';
+            card.innerHTML = `
+                <span class="emoji-icon">${e.icon}</span>
+                <span class="emoji-label">${e.label}</span>
+            `;
+            card.addEventListener('click', () => {
+                navigator.clipboard.writeText(e.icon);
+                toast.textContent = `${e.icon} Copied!`;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            });
+            grid.appendChild(card);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objective Randomiser | EduTools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container { max-width: 900px; margin: 0 auto; padding: 2rem; text-align: center; }
+        .slot-machine {
+            display: flex;
+            gap: 1.5rem;
+            margin: 4rem 0;
+            justify-content: center;
+            align-items: stretch;
+        }
+        .slot {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            min-height: 200px;
+        }
+        .slot-label {
+            position: absolute;
+            top: 1rem;
+            left: 0;
+            width: 100%;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 2px;
+        }
+        .slot-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            transition: all 0.1s;
+        }
+        .final-objective {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--primary);
+            padding: 2rem;
+            border-radius: 16px;
+            font-size: 1.25rem;
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .slot-machine { flex-direction: column; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="tool-container">
+        <section class="hero" style="padding: 4rem 0 2rem;">
+            <h1>Objective <span class="gradient-text">Randomiser</span></h1>
+            <p class="hero-sub">Mix and match Bloom's Taxonomy verbs with outcomes.</p>
+        </section>
+
+        <div class="slot-machine">
+            <div class="slot">
+                <div class="slot-label">Students Will</div>
+                <div class="slot-text" id="slot-1">Be able to</div>
+            </div>
+            <div class="slot">
+                <div class="slot-label">Action Verb</div>
+                <div class="slot-text" id="slot-2">analyze</div>
+            </div>
+            <div class="slot">
+                <div class="slot-label">Condition/Task</div>
+                <div class="slot-text" id="slot-3">the primary text</div>
+            </div>
+        </div>
+
+        <div class="final-objective" id="final-objective"></div>
+
+        <button class="btn-primary" id="spin-btn" style="min-width: 250px; font-size: 1.2rem;">
+            <i class="fas fa-shuffle"></i> Generate Objective
+        </button>
+    </main>
+
+    <script>
+        const verbs = ['analyze', 'evaluate', 'create', 'compare', 'design', 'explain', 'summarize', 'identify', 'demonstrate', 'critique'];
+        const tasks = ['the primary historical texts', 'a complex data set', 'the main character\'s motives', 'the chemical reaction process', 'the arguments presented in the article', 'a real-world mathematical problem', 'the impact of global warming', 'the structure of a cell', 'the cultural significance of the artifact', 'a given piece of code'];
+
+        const slot2 = document.getElementById('slot-2');
+        const slot3 = document.getElementById('slot-3');
+        const finalObj = document.getElementById('final-objective');
+        const spinBtn = document.getElementById('spin-btn');
+
+        spinBtn.addEventListener('click', () => {
+            let counter = 0;
+            finalObj.style.display = 'none';
+            spinBtn.disabled = true;
+
+            const interval = setInterval(() => {
+                slot2.textContent = verbs[Math.floor(Math.random() * verbs.length)];
+                slot3.textContent = tasks[Math.floor(Math.random() * tasks.length)];
+                counter++;
+
+                if (counter > 15) {
+                    clearInterval(interval);
+                    const finalVerb = verbs[Math.floor(Math.random() * verbs.length)];
+                    const finalTask = tasks[Math.floor(Math.random() * tasks.length)];
+                    
+                    slot2.textContent = finalVerb;
+                    slot3.textContent = finalTask;
+                    
+                    finalObj.innerHTML = `<strong>Final Objective:</strong> By the end of the lesson, students will be able to <em>${finalVerb}</em> ${finalTask}.`;
+                    finalObj.style.display = 'block';
+                    spinBtn.disabled = false;
+                }
+            }, 50);
+        });
+    </script>
+</body>
+</html>

@@ -1,18 +1,17 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduTools Hub | Essential Educational Resources</title>
-    <meta name="description" content="A comprehensive collection of quick content creation, assessment, planning, and engagement tools for modern educators.">
-    
-    <!-- Fonts & Icons -->
+    <title>OptiView | High-Fidelity Image Compressor</title>
+    <meta name="description"
+        content="Compress your images with zero quality loss. OptiView uses advanced algorithms to minimize file size while maintaining stunning clarity.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -29,13 +28,14 @@
     <nav id="main-nav">
         <div class="nav-inner">
             <div class="logo">
-                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
-                <span>EduTools Hub</span>
+                <div class="logo-icon"><i class="fas fa-compress-alt"></i></div>
+                <span>1decision</span>
             </div>
             <div class="nav-links">
-                <a href="#tools" class="nav-link">Browse Tools</a>
-                <a href="#" class="nav-cta">
-                    <i class="fas fa-user-plus"></i> Join Community
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Hub</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#compressor" class="nav-cta">
+                    <i class="fas fa-rocket"></i> Get Started
                 </a>
             </div>
         </div>
@@ -46,19 +46,23 @@
         <section class="hero">
             <div class="hero-badge"><i class="fas fa-bolt"></i> 100% Client-Side · Zero Uploads</div>
             <h1>Clarity Preserved.<br><span class="gradient-text">Size Minimized.</span></h1>
-            <p class="hero-sub">The professional image compression tool that reduces file sizes by up to 90% — all processed locally on your device, never on a server.</p>
+            <p class="hero-sub">The professional image compression tool that reduces file sizes by up to 90% — all
+                processed locally on your device, never on a server.</p>
             <div class="hero-stats">
-                <div class="hero-stat"><span class="stat-num">90%</span><span class="stat-label">Size Reduction</span></div>
+                <div class="hero-stat"><span class="stat-num">90%</span><span class="stat-label">Size Reduction</span>
+                </div>
                 <div class="hero-stat-divider"></div>
-                <div class="hero-stat"><span class="stat-num">0ms</span><span class="stat-label">Upload Time</span></div>
+                <div class="hero-stat"><span class="stat-num">0ms</span><span class="stat-label">Upload Time</span>
+                </div>
                 <div class="hero-stat-divider"></div>
                 <div class="hero-stat"><span class="stat-num">100%</span><span class="stat-label">Private</span></div>
             </div>
         </section>
 
-        <!-- Compressor Tool (Active) -->
+        <!-- Compressor -->
         <section id="compressor" class="compressor-section">
             <div class="tool-card">
+
                 <!-- Drop Zone -->
                 <div id="drop-zone" class="drop-zone">
                     <div class="drop-zone-inner">
@@ -87,6 +91,7 @@
 
                 <!-- Result View -->
                 <div id="result-view" class="result-view hidden">
+
                     <!-- Stats Bar -->
                     <div class="stats-bar">
                         <div class="stat-chip original-chip">
@@ -118,7 +123,8 @@
                                 <i class="fas fa-arrows-left-right"></i>
                             </div>
                         </div>
-                        <input type="range" min="0" max="100" value="50" id="comparison-slider" class="comparison-slider" aria-label="Comparison slider">
+                        <input type="range" min="0" max="100" value="50" id="comparison-slider"
+                            class="comparison-slider" aria-label="Comparison slider">
                     </div>
 
                     <!-- Controls Panel -->
@@ -190,63 +196,33 @@
             </div>
         </section>
 
-        <!-- Hub Section -->
-        <section id="tools" class="hub-section">
-            <div class="hub-header" style="text-align: center; margin-bottom: 3rem;">
-                <h2>Tool <span class="gradient-text">Directory</span></h2>
-                <p>Explore our full collection of educational utilities.</p>
-            </div>
-            <div class="hub-controls">
-                <div class="search-wrap">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="search-input" class="search-input" placeholder="Search for a tool (e.g. 'compressor', 'timer')...">
-                </div>
-                
-                <div class="filter-pills">
-                    <button class="filter-pill active" data-category="All">All Tools</button>
-                    <button class="filter-pill" data-category="Quick Content Creation">Quick Content Creation</button>
-                    <button class="filter-pill" data-category="Assessment & Grading">Assessment & Grading</button>
-                    <button class="filter-pill" data-category="Planning & Organisation">Planning & Organisation</button>
-                    <button class="filter-pill" data-category="Student Engagement">Student Engagement</button>
-                </div>
-            </div>
-
-            <!-- Tools Grid -->
-            <div id="tools-grid" class="tools-grid">
-                <!-- Rendered by hub.js -->
-                <div class="no-results">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Loading tools...</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Features Section -->
-        <section class="features-section">
+        <!-- Features -->
+        <section id="features" class="features-section">
             <div class="features-header">
-                <h2>Built for <span class="gradient-text">Educators</span></h2>
-                <p>Designed to be fast, reliable, and accessible from any device.</p>
+                <h2>Why <span class="gradient-text">OptiView</span>?</h2>
+                <p>Built for professionals who demand both quality and performance.</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-bolt"></i></div>
-                    <h3>Instant Access</h3>
-                    <p>No account required. Every tool is ready to use the moment you need it.</p>
+                    <h3>Instant Processing</h3>
+                    <p>WebWorker-powered compression runs in a background thread so your UI stays silky smooth.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-eye"></i></div>
+                    <h3>Pixel-Perfect Output</h3>
+                    <p>Advanced perceptual algorithms preserve visual fidelity even at aggressive compression levels.
+                    </p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-shield-halved"></i></div>
-                    <h3>Privacy Protected</h3>
-                    <p>Your data stays on your device. We never store or track student information.</p>
+                    <h3>100% Private</h3>
+                    <p>Images never leave your browser. Zero server uploads — your data stays on your device.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-mobile-screen"></i></div>
-                    <h3>Cross-Platform</h3>
-                    <p>Works perfectly on interactive whiteboards, tablets, and desktop computers.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-puzzle-piece"></i></div>
-                    <h3>Zero Installation</h3>
-                    <p>Entirely browser-based tools that bypass strict school IT restrictions.</p>
+                    <div class="feature-icon"><i class="fas fa-sliders"></i></div>
+                    <h3>Full Control</h3>
+                    <p>Fine-tune quality, output format, and metadata settings to match your exact requirements.</p>
                 </div>
             </div>
         </section>
@@ -255,19 +231,19 @@
     <footer>
         <div class="footer-inner">
             <div class="footer-logo">
-                <div class="logo-icon sm"><i class="fas fa-graduation-cap"></i></div>
-                <span>EduTools Hub</span>
+                <div class="logo-icon sm"><i class="fas fa-compress-alt"></i></div>
+                <span>OptiView</span>
             </div>
-            <p>&copy; 2026 EduTools Hub. Helping teachers focus on what matters most.</p>
+            <p>&copy; 2026 OptiView. Built with precision for the modern web.</p>
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+    <!-- browser-image-compression via CDN -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="script.js"></script>
-    <script src="hub.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator | EduTools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 1rem;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        #qr-result {
+            margin: 2rem auto;
+            width: 250px;
+            height: 250px;
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            display: none;
+        }
+
+        #qr-result img {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="tool-container">
+        <section class="hero" style="padding: 4rem 0 2rem;">
+            <h1>QR Code <span class="gradient-text">Generator</span></h1>
+            <p class="hero-sub">Create custom QR codes for your classroom resources.</p>
+        </section>
+
+        <div class="card">
+            <input type="text" id="url-input" placeholder="Enter URL or Text (e.g., https://www.1decision.co.uk/)">
+            <button class="btn-primary" id="generate-btn">
+                <i class="fas fa-qrcode"></i> Generate QR Code
+            </button>
+
+            <div id="qr-result">
+                <img id="qr-image" src="" alt="QR Code">
+            </div>
+            <a id="download-link" class="btn-secondary" style="display: none; margin-top: 1.5rem;" href="#"
+                download="qrcode.png">
+                <i class="fas fa-download"></i> Download Image
+            </a>
+        </div>
+    </main>
+
+    <script>
+        const generateBtn = document.getElementById('generate-btn');
+        const input = document.getElementById('url-input');
+        const qrResult = document.getElementById('qr-result');
+        const qrImage = document.getElementById('qr-image');
+        const downloadLink = document.getElementById('download-link');
+
+        generateBtn.addEventListener('click', async () => {
+            const text = input.value.trim();
+            if (!text) {
+                alert('Please enter some text or a URL.');
+                return;
+            }
+
+            const url = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(text)}`;
+            qrImage.src = url;
+            qrResult.style.display = 'block';
+
+            // Fetch image as blob for downloading
+            try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const objectUrl = URL.createObjectURL(blob);
+                downloadLink.href = objectUrl;
+                downloadLink.style.display = 'inline-flex';
+            } catch (e) {
+                console.error('Error fetching image for download', e);
+            }
+        });
+    </script>
+</body>
+
+</html>

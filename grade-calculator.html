@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Calculator | EduTools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .calc-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .input-card, .result-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+        .result-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .input-group input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 1rem;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.2rem;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .grade-letter {
+            font-size: 6rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        .grade-percent {
+            font-size: 2rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="tool-container">
+        <section class="hero" style="padding: 4rem 0 2rem;">
+            <h1>Grade <span class="gradient-text">Calculator</span></h1>
+            <p class="hero-sub">Quickly determine percentages and letter grades.</p>
+        </section>
+
+        <div class="calc-layout">
+            <div class="input-card">
+                <div class="input-group">
+                    <label>Total Questions / Points</label>
+                    <input type="number" id="total" value="100" min="1">
+                </div>
+                <div class="input-group">
+                    <label>Number Wrong</label>
+                    <input type="number" id="wrong" value="0" min="0">
+                </div>
+                <button class="btn-primary" id="calc-btn" style="width: 100%; margin-top: 1rem;">
+                    Calculate Grade
+                </button>
+            </div>
+            <div class="result-card">
+                <div class="grade-letter" id="grade-letter">A</div>
+                <div class="grade-percent" id="grade-percent">100%</div>
+                <div style="color: var(--text-muted); margin-top: 1rem;" id="score-text">100 / 100 correct</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const totalInput = document.getElementById('total');
+        const wrongInput = document.getElementById('wrong');
+        const calcBtn = document.getElementById('calc-btn');
+        const gradeLetter = document.getElementById('grade-letter');
+        const gradePercent = document.getElementById('grade-percent');
+        const scoreText = document.getElementById('score-text');
+
+        function calculate() {
+            const total = parseFloat(totalInput.value) || 0;
+            const wrong = parseFloat(wrongInput.value) || 0;
+
+            if (total <= 0 || wrong < 0 || wrong > total) {
+                gradeLetter.textContent = '-';
+                gradePercent.textContent = 'Invalid Input';
+                scoreText.textContent = '';
+                return;
+            }
+
+            const correct = total - wrong;
+            const percent = (correct / total) * 100;
+            
+            gradePercent.textContent = percent.toFixed(1) + '%';
+            scoreText.textContent = `${correct} / ${total} correct`;
+
+            let letter = 'F';
+            if (percent >= 90) letter = 'A';
+            else if (percent >= 80) letter = 'B';
+            else if (percent >= 70) letter = 'C';
+            else if (percent >= 60) letter = 'D';
+
+            gradeLetter.textContent = letter;
+            
+            // Colour coding
+            if (percent >= 80) gradeLetter.style.color = '#4ade80';
+            else if (percent >= 60) gradeLetter.style.color = '#facc15';
+            else gradeLetter.style.color = '#f87171';
+        }
+
+        calcBtn.addEventListener('click', calculate);
+        totalInput.addEventListener('input', calculate);
+        wrongInput.addEventListener('input', calculate);
+        
+        calculate();
+    </script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Name Picker | EduTools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .picker-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .name-list-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        textarea {
+            height: 400px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            resize: none;
+        }
+        .display-area {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        .winner-name {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 2rem 0;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .winner-name.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="tool-container">
+        <section class="hero" style="padding: 4rem 0 2rem;">
+            <h1>Random <span class="gradient-text">Name Picker</span></h1>
+            <p class="hero-sub">Call on students fairly with a random selector.</p>
+        </section>
+
+        <div class="picker-layout">
+            <div class="name-list-area">
+                <label style="font-weight: 600; color: var(--text-muted);">Enter Names (one per line)</label>
+                <textarea id="name-input" placeholder="Alex&#10;Sam&#10;Jordan&#10;Taylor..."></textarea>
+                <div id="count-display" style="font-size: 0.9rem; color: var(--text-muted);">0 names entered</div>
+            </div>
+
+            <div class="display-area">
+                <div class="winner-name" id="winner-display">???</div>
+                <button class="btn-primary" id="pick-btn" style="width: 100%;">
+                    <i class="fas fa-random"></i> Pick a Name
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const input = document.getElementById('name-input');
+        const display = document.getElementById('winner-display');
+        const pickBtn = document.getElementById('pick-btn');
+        const countDisplay = document.getElementById('count-display');
+
+        input.addEventListener('input', () => {
+            const names = input.value.split('\n').filter(n => n.trim().length > 0);
+            countDisplay.textContent = `${names.length} names entered`;
+        });
+
+        pickBtn.addEventListener('click', () => {
+            const names = input.value.split('\n').filter(n => n.trim().length > 0);
+            if (names.length === 0) return;
+
+            display.classList.remove('show');
+            display.textContent = "Choosing...";
+            display.style.opacity = 1;
+            display.style.transform = "scale(1)";
+
+            let counter = 0;
+            const interval = setInterval(() => {
+                display.textContent = names[Math.floor(Math.random() * names.length)];
+                counter++;
+                if (counter > 20) {
+                    clearInterval(interval);
+                    const winner = names[Math.floor(Math.random() * names.length)];
+                    display.textContent = winner;
+                    display.classList.add('show');
+                }
+            }, 50);
+        });
+    </script>
+</body>
+
+</html>

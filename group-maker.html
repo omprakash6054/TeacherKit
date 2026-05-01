@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Maker | EduTools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+        .controls-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            color: white;
+            font-family: inherit;
+            margin-bottom: 1.5rem;
+            resize: vertical;
+        }
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+        }
+        .input-group input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem;
+            border-radius: 12px;
+            color: white;
+        }
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        .group-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+        .group-card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+        }
+        .group-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .group-card li {
+            padding: 0.5rem 0;
+            color: var(--text-main);
+        }
+        @media (max-width: 768px) {
+            .layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="tool-container">
+        <section class="hero" style="padding: 4rem 0 2rem;">
+            <h1>Group <span class="gradient-text">Maker</span></h1>
+            <p class="hero-sub">Randomly assign students into balanced teams.</p>
+        </section>
+
+        <div class="layout">
+            <div class="controls-card">
+                <label style="color: var(--text-muted); margin-bottom: 0.5rem; display: block;">Student Names (one per line)</label>
+                <textarea id="names-input">Alex&#10;Jordan&#10;Taylor&#10;Morgan&#10;Casey&#10;Riley&#10;Jamie&#10;Quinn</textarea>
+                
+                <div class="input-group">
+                    <label>Number of Groups</label>
+                    <input type="number" id="num-groups" value="2" min="1">
+                </div>
+                
+                <button class="btn-primary" id="generate-btn" style="width: 100%;">
+                    <i class="fas fa-users"></i> Generate Groups
+                </button>
+            </div>
+
+            <div class="groups-grid" id="groups-container">
+                <!-- Groups will appear here -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const generateBtn = document.getElementById('generate-btn');
+        const namesInput = document.getElementById('names-input');
+        const numGroupsInput = document.getElementById('num-groups');
+        const container = document.getElementById('groups-container');
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        generateBtn.addEventListener('click', () => {
+            const names = namesInput.value.split('\n').map(n => n.trim()).filter(n => n);
+            const numGroups = parseInt(numGroupsInput.value);
+
+            if (names.length === 0 || isNaN(numGroups) || numGroups < 1) {
+                alert('Please enter valid names and group count.');
+                return;
+            }
+
+            const shuffled = shuffle([...names]);
+            const groups = Array.from({ length: numGroups }, () => []);
+
+            shuffled.forEach((name, index) => {
+                groups[index % numGroups].push(name);
+            });
+
+            container.innerHTML = '';
+            groups.forEach((group, index) => {
+                if (group.length === 0) return;
+                const card = document.createElement('div');
+                card.className = 'group-card';
+                card.innerHTML = `
+                    <h3>Group ${index + 1}</h3>
+                    <ul>
+                        ${group.map(name => `<li>${name}</li>`).join('')}
+                    </ul>
+                `;
+                container.appendChild(card);
+            });
+        });
+        
+        generateBtn.click(); // Generate initial groups
+    </script>
+</body>
+</html>
