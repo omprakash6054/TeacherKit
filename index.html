@@ -5,14 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduTools Hub | Essential Educational Resources</title>
-    <meta name="description" content="A comprehensive collection of quick content creation, assessment, planning, and engagement tools for modern educators.">
-    
+    <meta name="description"
+        content="A comprehensive collection of quick content creation, assessment, planning, and engagement tools for modern educators.">
+
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
+
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -44,149 +46,18 @@
     <main>
         <!-- Hero -->
         <section class="hero">
-            <div class="hero-badge"><i class="fas fa-bolt"></i> 100% Client-Side · Zero Uploads</div>
-            <h1>Clarity Preserved.<br><span class="gradient-text">Size Minimized.</span></h1>
-            <p class="hero-sub">The professional image compression tool that reduces file sizes by up to 90% — all processed locally on your device, never on a server.</p>
+            <div class="hero-badge"><i class="fas fa-graduation-cap"></i> All-In-One Toolkit</div>
+            <h1>Empowering Teachers.<br><span class="gradient-text">Streamlining Classrooms.</span></h1>
+            <p class="hero-sub">A premium collection of 20+ professional tools designed to help educators save time and
+                focus on what matters most: teaching.</p>
             <div class="hero-stats">
-                <div class="hero-stat"><span class="stat-num">90%</span><span class="stat-label">Size Reduction</span></div>
+                <div class="hero-stat"><span class="stat-num">20+</span><span class="stat-label">Smart Tools</span>
+                </div>
                 <div class="hero-stat-divider"></div>
-                <div class="hero-stat"><span class="stat-num">0ms</span><span class="stat-label">Upload Time</span></div>
+                <div class="hero-stat"><span class="stat-num">100%</span><span class="stat-label">Free to Use</span>
+                </div>
                 <div class="hero-stat-divider"></div>
                 <div class="hero-stat"><span class="stat-num">100%</span><span class="stat-label">Private</span></div>
-            </div>
-        </section>
-
-        <!-- Compressor Tool (Active) -->
-        <section id="compressor" class="compressor-section">
-            <div class="tool-card">
-                <!-- Drop Zone -->
-                <div id="drop-zone" class="drop-zone">
-                    <div class="drop-zone-inner">
-                        <div class="upload-icon-wrap">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                        </div>
-                        <h2 class="drop-title">Drop your image here</h2>
-                        <p class="drop-sub">Supports JPG, PNG, WEBP, GIF · Max 50 MB</p>
-                        <button class="browse-btn" id="browse-btn">
-                            <i class="fas fa-folder-open"></i> Browse Files
-                        </button>
-                        <input type="file" id="file-input" hidden accept="image/*">
-                    </div>
-                </div>
-
-                <!-- Processing -->
-                <div id="processing-view" class="processing-view hidden">
-                    <div class="processing-inner">
-                        <div class="pulse-ring"></div>
-                        <div class="spinner-ring"></div>
-                        <i class="fas fa-compress-alt spin-icon"></i>
-                        <p class="processing-text">Optimizing your image<span class="dots"></span></p>
-                        <p class="processing-sub">Running advanced compression algorithms</p>
-                    </div>
-                </div>
-
-                <!-- Result View -->
-                <div id="result-view" class="result-view hidden">
-                    <!-- Stats Bar -->
-                    <div class="stats-bar">
-                        <div class="stat-chip original-chip">
-                            <span class="chip-label">Original</span>
-                            <span class="chip-value" id="original-size">—</span>
-                        </div>
-                        <div class="reduction-badge" id="reduction-pct">
-                            <i class="fas fa-arrow-down"></i>
-                            <span>—</span>
-                        </div>
-                        <div class="stat-chip compressed-chip">
-                            <span class="chip-label">Optimized</span>
-                            <span class="chip-value" id="compressed-size">—</span>
-                        </div>
-                    </div>
-
-                    <!-- Image Comparison -->
-                    <div class="comparison-wrap" id="comparison-wrap">
-                        <div class="img-layer original-layer">
-                            <img id="original-preview" src="" alt="Original Image">
-                            <div class="img-tag">ORIGINAL</div>
-                        </div>
-                        <div class="img-layer compressed-layer" id="compressed-layer">
-                            <img id="compressed-preview" src="" alt="Compressed Image">
-                            <div class="img-tag optimized">OPTIMIZED</div>
-                        </div>
-                        <div class="divider-line" id="divider-line">
-                            <div class="divider-handle">
-                                <i class="fas fa-arrows-left-right"></i>
-                            </div>
-                        </div>
-                        <input type="range" min="0" max="100" value="50" id="comparison-slider" class="comparison-slider" aria-label="Comparison slider">
-                    </div>
-
-                    <!-- Controls Panel -->
-                    <div class="controls-panel">
-                        <div class="controls-grid">
-                            <div class="control-group">
-                                <div class="control-header">
-                                    <label for="quality-slider">Quality Level</label>
-                                    <span class="quality-display" id="quality-display">75%</span>
-                                </div>
-                                <div class="slider-track">
-                                    <input type="range" id="quality-slider" min="1" max="100" value="75">
-                                </div>
-                                <div class="slider-labels">
-                                    <span>Max Compression</span>
-                                    <span>Max Quality</span>
-                                </div>
-                            </div>
-
-                            <div class="control-group format-group">
-                                <div class="control-header">
-                                    <label>Output Formats</label>
-                                    <button id="select-all-formats" class="select-all-btn">Select All</button>
-                                </div>
-                                <div class="format-pills-multi">
-                                    <button class="format-pill active" data-format="image/webp">WebP</button>
-                                    <button class="format-pill" data-format="image/jpeg">JPEG</button>
-                                    <button class="format-pill" data-format="image/jpg">JPG</button>
-                                    <button class="format-pill" data-format="image/png">PNG</button>
-                                    <button class="format-pill" data-format="image/avif">AVIF</button>
-                                </div>
-                                <p class="format-hint">Select one or more formats to download</p>
-                            </div>
-
-                            <div class="control-group toggle-group">
-                                <div class="toggle-row">
-                                    <div class="toggle-info">
-                                        <span class="toggle-label">Preserve Metadata</span>
-                                        <span class="toggle-sub">Keep EXIF / GPS data</span>
-                                    </div>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="preserve-exif" checked>
-                                        <span class="toggle-track"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="action-row">
-                            <button id="re-compress" class="btn-secondary">
-                                <i class="fas fa-sync-alt"></i> Re-Apply
-                            </button>
-                            <button id="new-image-btn" class="btn-ghost">
-                                <i class="fas fa-plus"></i> New Image
-                            </button>
-                            <a id="download-btn" class="btn-primary" href="#" download>
-                                <i class="fas fa-download"></i> Download
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Error Toast -->
-                <div id="error-toast" class="error-toast hidden">
-                    <i class="fas fa-triangle-exclamation"></i>
-                    <span id="error-msg">Something went wrong.</span>
-                    <button id="toast-close"><i class="fas fa-xmark"></i></button>
-                </div>
             </div>
         </section>
 
@@ -199,9 +70,10 @@
             <div class="hub-controls">
                 <div class="search-wrap">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="search-input" class="search-input" placeholder="Search for a tool (e.g. 'compressor', 'timer')...">
+                    <input type="text" id="search-input" class="search-input"
+                        placeholder="Search for a tool (e.g. 'compressor', 'timer')...">
                 </div>
-                
+
                 <div class="filter-pills">
                     <button class="filter-pill active" data-category="All">All Tools</button>
                     <button class="filter-pill" data-category="Quick Content Creation">Quick Content Creation</button>
@@ -263,10 +135,6 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script src="script.js"></script>
     <script src="hub.js"></script>
 </body>
 
