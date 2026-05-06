@@ -47,6 +47,13 @@ const tools = [
         icon: 'fa-calculator',
         link: 'word-counter.html'
     },
+    {
+        name: 'Certificate Maker',
+        description: 'Recognise achievement. Create professional certificates for students in seconds.',
+        category: 'Quick Content Creation',
+        icon: 'fa-award',
+        link: 'certificate-maker.html'
+    },
 
     // Assessment & Grading
     {
@@ -83,6 +90,13 @@ const tools = [
         category: 'Assessment & Grading',
         icon: 'fa-table',
         link: 'rubric-generator.html'
+    },
+    {
+        name: 'Flashcard Generator',
+        description: 'Interactive revision. Create and flip digital cards for study sessions.',
+        category: 'Assessment & Grading',
+        icon: 'fa-clone',
+        link: 'flashcard-generator.html'
     },
 
     // Planning & Organisation
@@ -157,6 +171,13 @@ const tools = [
         category: 'Student Engagement',
         icon: 'fa-eye-dropper',
         link: 'colour-picker.html'
+    },
+    {
+        name: 'Classroom Noise Meter',
+        description: 'Manage volume. Visual feedback to help students maintain focus.',
+        category: 'Student Engagement',
+        icon: 'fa-volume-high',
+        link: 'noise-meter.html'
     }
 ];
 

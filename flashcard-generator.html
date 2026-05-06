@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard Generator | EduTools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .flashcard-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            min-height: 500px;
+            justify-content: center;
+        }
+
+        /* Card 3D Flip */
+        .flashcard {
+            width: 500px;
+            height: 300px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            .flashcard { width: 90%; height: 250px; }
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border-radius: 30px;
+            font-size: 1.8rem;
+            font-weight: 600;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+        }
+
+        .card-front {
+            background: var(--card-bg);
+            color: var(--text-main);
+            backdrop-filter: blur(10px);
+        }
+
+        .card-back {
+            background: var(--primary-gradient);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon:hover:not(:disabled) {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-icon:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .card-counter {
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Editor Section */
+        .editor-section {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 50px;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 0.8rem;
+            color: var(--text-main);
+            font-family: inherit;
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .add-card-btn {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed var(--glass-border);
+            border-radius: 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+
+        .add-card-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 3rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="tool-container">
+        <section class="hero" style="padding: 2rem 0;">
+            <h1>Flashcard <span class="gradient-text">Generator</span></h1>
+            <p class="hero-sub">Create digital revision decks. Flip to learn, click to shuffle.</p>
+        </section>
+
+        <!-- Study View -->
+        <div class="flashcard-stage" id="study-view">
+            <div id="flashcard" class="flashcard">
+                <div class="flashcard-inner">
+                    <div class="card-front" id="card-front-text">Front of Card</div>
+                    <div class="card-back" id="card-back-text">Back of Card</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="prev-btn" class="btn-icon"><i class="fas fa-chevron-left"></i></button>
+                <div class="card-counter"><span id="current-index">1</span> / <span id="total-count">1</span></div>
+                <button id="next-btn" class="btn-icon"><i class="fas fa-chevron-right"></i></button>
+                <button id="shuffle-btn" class="btn-icon" title="Shuffle Deck"><i class="fas fa-random"></i></button>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Click the card to flip</p>
+        </div>
+
+        <!-- Editor View -->
+        <section class="editor-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin: 0;">Deck Manager</h2>
+                <button id="clear-all" class="delete-btn" style="padding: 0.5rem 1rem;">Clear All</button>
+            </div>
+            
+            <div id="card-inputs">
+                <!-- Inputs injected here -->
+            </div>
+
+            <button id="add-card" class="add-card-btn">
+                <i class="fas fa-plus"></i> Add New Card
+            </button>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let deck = [
+                { front: 'Photosynthesis', back: 'The process by which plants use sunlight to synthesise nutrients from CO2 and water.' },
+                { front: 'Mitochondria', back: 'The powerhouse of the cell. Responsible for ATP production.' },
+                { front: 'H2O', back: 'The chemical formula for water.' }
+            ];
+
+            let currentIndex = 0;
+            const flashcard = document.getElementById('flashcard');
+            const frontEl = document.getElementById('card-front-text');
+            const backEl = document.getElementById('card-back-text');
+            const indexEl = document.getElementById('current-index');
+            const totalEl = document.getElementById('total-count');
+            
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const shuffleBtn = document.getElementById('shuffle-btn');
+            const addCardBtn = document.getElementById('add-card');
+            const inputContainer = document.getElementById('card-inputs');
+
+            function updateCard() {
+                if (deck.length === 0) {
+                    frontEl.innerText = "No Cards";
+                    backEl.innerText = "Add cards below to start";
+                    indexEl.innerText = "0";
+                    totalEl.innerText = "0";
+                    return;
+                }
+                flashcard.classList.remove('flipped');
+                setTimeout(() => {
+                    frontEl.innerText = deck[currentIndex].front;
+                    backEl.innerText = deck[currentIndex].back;
+                    indexEl.innerText = currentIndex + 1;
+                    totalEl.innerText = deck.length;
+                }, flashcard.classList.contains('flipped') ? 300 : 0);
+            }
+
+            function renderInputs() {
+                inputContainer.innerHTML = '';
+                deck.forEach((card, i) => {
+                    const row = document.createElement('div');
+                    row.className = 'card-input-row';
+                    row.innerHTML = `
+                        <input type="text" class="input-field front-input" value="${card.front}" placeholder="Front side" data-index="${i}">
+                        <input type="text" class="input-field back-input" value="${card.back}" placeholder="Back side" data-index="${i}">
+                        <button class="delete-btn delete-card" data-index="${i}"><i class="fas fa-trash"></i></button>
+                    `;
+                    inputContainer.appendChild(row);
+                });
+
+                // Listeners for inputs
+                document.querySelectorAll('.front-input').forEach(inp => {
+                    inp.addEventListener('input', (e) => {
+                        deck[e.target.dataset.index].front = e.target.value;
+                        updateCard();
+                    });
+                });
+                document.querySelectorAll('.back-input').forEach(inp => {
+                    inp.addEventListener('input', (e) => {
+                        deck[e.target.dataset.index].back = e.target.value;
+                        updateCard();
+                    });
+                });
+                document.querySelectorAll('.delete-card').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const idx = parseInt(btn.closest('button').dataset.index);
+                        deck.splice(idx, 1);
+                        if (currentIndex >= deck.length) currentIndex = Math.max(0, deck.length - 1);
+                        renderInputs();
+                        updateCard();
+                    });
+                });
+            }
+
+            flashcard.addEventListener('click', () => {
+                flashcard.classList.toggle('flipped');
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateCard();
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentIndex < deck.length - 1) {
+                    currentIndex++;
+                    updateCard();
+                }
+            });
+
+            shuffleBtn.addEventListener('click', () => {
+                deck.sort(() => Math.random() - 0.5);
+                currentIndex = 0;
+                updateCard();
+                renderInputs();
+            });
+
+            addCardBtn.addEventListener('click', () => {
+                deck.push({ front: '', back: '' });
+                renderInputs();
+                updateCard();
+                // Focus the new input
+                const rows = inputContainer.querySelectorAll('.card-input-row');
+                rows[rows.length - 1].querySelector('.front-input').focus();
+            });
+
+            document.getElementById('clear-all').addEventListener('click', () => {
+                if (confirm('Are you sure you want to delete all cards?')) {
+                    deck = [];
+                    currentIndex = 0;
+                    renderInputs();
+                    updateCard();
+                }
+            });
+
+            // Init
+            renderInputs();
+            updateCard();
+        });
+    </script>
+</body>
+
+</html>

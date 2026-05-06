@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Noise Meter | EduTools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .meter-stage {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Gauge Visual */
+        .gauge-container {
+            position: relative;
+            width: 300px;
+            height: 150px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .gauge-bg {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 15px solid rgba(255,255,255,0.1);
+        }
+
+        .gauge-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 15px solid var(--primary);
+            border-color: var(--primary) transparent transparent transparent;
+            transform: rotate(-45deg);
+            transition: transform 0.1s ease-out, border-color 0.3s;
+        }
+
+        .gauge-value {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .status-badge {
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
+
+        .status-quiet { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .status-moderate { background: rgba(234, 179, 8, 0.2); color: #eab308; }
+        .status-loud { background: rgba(239, 68, 68, 0.2); color: #ef4444; animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Controls */
+        .controls-panel {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 600px) {
+            .controls-panel { grid-template-columns: 1fr; }
+        }
+
+        .control-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            border-radius: 20px;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .btn-start {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px var(--primary-glow);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px var(--primary-glow);
+        }
+
+        .btn-stop {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* History Visualizer */
+        .history-canvas {
+            width: 100%;
+            height: 60px;
+            margin-top: 2rem;
+            border-radius: 10px;
+            background: rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="tool-container">
+        <section class="hero" style="padding: 1rem 0; text-align: center;">
+            <h1>Classroom <span class="gradient-text">Noise Meter</span></h1>
+            <p class="hero-sub">Help students self-regulate their volume with visual feedback.</p>
+        </section>
+
+        <div class="meter-stage">
+            <div class="gauge-container">
+                <div class="gauge-bg"></div>
+                <div id="gauge-fill" class="gauge-fill"></div>
+                <div id="volume-val" class="gauge-value">0</div>
+            </div>
+
+            <div id="status-badge" class="status-badge status-quiet">Ready to listen</div>
+
+            <canvas id="history-canvas" class="history-canvas"></canvas>
+
+            <div class="controls-panel">
+                <div class="control-card">
+                    <div class="control-label">
+                        <span>Sensitivity</span>
+                        <span id="sensitivity-val">50%</span>
+                    </div>
+                    <input type="range" id="sensitivity" class="slider" min="1" max="100" value="50">
+                </div>
+                <div class="control-card">
+                    <div class="control-label">
+                        <span>Loudness Limit</span>
+                        <span id="limit-val">80%</span>
+                    </div>
+                    <input type="range" id="limit" class="slider" min="10" max="100" value="80">
+                </div>
+            </div>
+        </div>
+
+        <button id="toggle-btn" class="btn-start">
+            <i class="fas fa-microphone"></i> Start Monitoring
+        </button>
+        
+        <p style="color: var(--text-muted); font-size: 0.8rem; max-width: 400px; text-align: center;">
+            <i class="fas fa-shield-halved"></i> Privacy Note: Audio is processed locally in your browser and is never recorded or uploaded.
+        </p>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('toggle-btn');
+            const volumeVal = document.getElementById('volume-val');
+            const gaugeFill = document.getElementById('gauge-fill');
+            const statusBadge = document.getElementById('status-badge');
+            const sensInput = document.getElementById('sensitivity');
+            const limitInput = document.getElementById('limit');
+            const sensVal = document.getElementById('sensitivity-val');
+            const limitVal = document.getElementById('limit-val');
+            
+            const canvas = document.getElementById('history-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            let isRunning = false;
+            let audioContext;
+            let analyser;
+            let microphone;
+            let dataArray;
+            let animationId;
+            let history = new Array(100).fill(0);
+
+            sensInput.addEventListener('input', (e) => sensVal.innerText = e.target.value + '%');
+            limitInput.addEventListener('input', (e) => limitVal.innerText = e.target.value + '%');
+
+            async function startMonitoring() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioContext.createAnalyser();
+                    microphone = audioContext.createMediaStreamSource(stream);
+                    
+                    analyser.fftSize = 256;
+                    microphone.connect(analyser);
+                    
+                    const bufferLength = analyser.frequencyBinCount;
+                    dataArray = new Uint8Array(bufferLength);
+                    
+                    isRunning = true;
+                    toggleBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Monitoring';
+                    toggleBtn.classList.add('btn-stop');
+                    
+                    updateMeter();
+                } catch (err) {
+                    alert('Could not access microphone. Please check permissions.');
+                    console.error(err);
+                }
+            }
+
+            function stopMonitoring() {
+                isRunning = false;
+                if (audioContext) audioContext.close();
+                cancelAnimationFrame(animationId);
+                toggleBtn.innerHTML = '<i class="fas fa-microphone"></i> Start Monitoring';
+                toggleBtn.classList.remove('btn-stop');
+                volumeVal.innerText = '0';
+                gaugeFill.style.transform = 'rotate(-45deg)';
+                statusBadge.innerText = 'Monitoring Stopped';
+                statusBadge.className = 'status-badge status-quiet';
+            }
+
+            function updateMeter() {
+                if (!isRunning) return;
+                
+                analyser.getByteFrequencyData(dataArray);
+                
+                // Calculate average volume
+                let sum = 0;
+                for (let i = 0; i < dataArray.length; i++) {
+                    sum += dataArray[i];
+                }
+                let average = sum / dataArray.length;
+                
+                // Apply sensitivity
+                let sensitivity = sensInput.value / 50;
+                let volume = Math.min(100, Math.round(average * sensitivity));
+                
+                // Update UI
+                volumeVal.innerText = volume;
+                
+                // Gauge rotation: -45deg (0%) to 135deg (100%)
+                let rotation = -45 + (volume * 1.8);
+                gaugeFill.style.transform = `rotate(${rotation}deg)`;
+                
+                // Color and Status
+                let limit = parseInt(limitInput.value);
+                if (volume > limit) {
+                    statusBadge.innerText = 'Too Loud!';
+                    statusBadge.className = 'status-badge status-loud';
+                    gaugeFill.style.borderColor = '#ef4444 transparent transparent transparent';
+                } else if (volume > limit * 0.6) {
+                    statusBadge.innerText = 'Moderate Volume';
+                    statusBadge.className = 'status-badge status-moderate';
+                    gaugeFill.style.borderColor = '#eab308 transparent transparent transparent';
+                } else {
+                    statusBadge.innerText = 'Perfect Volume';
+                    statusBadge.className = 'status-badge status-quiet';
+                    gaugeFill.style.borderColor = 'var(--primary) transparent transparent transparent';
+                }
+
+                // Update History
+                history.push(volume);
+                history.shift();
+                drawHistory();
+                
+                animationId = requestAnimationFrame(updateMeter);
+            }
+
+            function drawHistory() {
+                const w = canvas.width = canvas.clientWidth;
+                const h = canvas.height = canvas.clientHeight;
+                ctx.clearRect(0, 0, w, h);
+                
+                ctx.beginPath();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = '#6366f1';
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                const step = w / (history.length - 1);
+                for (let i = 0; i < history.length; i++) {
+                    const x = i * step;
+                    const y = h - (history[i] / 100 * h);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                
+                // Gradient fill
+                ctx.lineTo(w, h);
+                ctx.lineTo(0, h);
+                const grad = ctx.createLinearGradient(0, 0, 0, h);
+                grad.addColorStop(0, 'rgba(99, 102, 241, 0.2)');
+                grad.addColorStop(1, 'transparent');
+                ctx.fillStyle = grad;
+                ctx.fill();
+            }
+
+            toggleBtn.addEventListener('click', () => {
+                if (isRunning) stopMonitoring();
+                else startMonitoring();
+            });
+
+            // Initial Draw
+            drawHistory();
+        });
+    </script>
+</body>
+
+</html>
