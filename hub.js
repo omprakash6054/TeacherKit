@@ -13,6 +13,13 @@ const tools = [
         link: 'compressor.html'
     },
     {
+        name: 'PDF Content Editor',
+        description: 'Update lesson plans or certificates. Search and replace text inside PDFs instantly.',
+        category: 'Quick Content Creation',
+        icon: 'fa-file-signature',
+        link: 'pdf-editor.html'
+    },
+    {
         name: 'PDF Merger/Splitter',
         description: 'Combine handouts fast. Split large documents into manageable sections.',
         category: 'Quick Content Creation',

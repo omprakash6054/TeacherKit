@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Content Editor | EduTools Hub</title>
+    <meta name="description"
+        content="Search and replace text in any PDF document instantly. Processed 100% locally on your device for maximum privacy.">
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Local Styles -->
+    <link rel="stylesheet" href="../style.css">
+
+    <style>
+        /* Tool-Specific Overrides & Enhancements */
+        .pdf-editor-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            min-height: 600px;
+        }
+
+        @media (max-width: 992px) {
+            .pdf-editor-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .editor-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .preview-pane {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            max-height: 800px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .pdf-page-canvas {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            background: white;
+            border-radius: 4px;
+            max-width: 100%;
+        }
+
+        .replacement-group {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.25rem;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .replacement-group:hover {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+            background: none;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .remove-btn:hover {
+            color: var(--danger);
+        }
+
+        .input-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .input-field-wrap label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.05em;
+        }
+
+        .custom-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            color: white;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .custom-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .add-rule-btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed var(--glass-border);
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .add-rule-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .action-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: auto;
+        }
+
+        .btn-full {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .empty-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 400px;
+            color: var(--text-muted);
+            text-align: center;
+            gap: 1.5rem;
+        }
+
+        .empty-preview i {
+            font-size: 4rem;
+            opacity: 0.2;
+        }
+
+        /* Success Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.3);
+            z-index: 1000;
+            transform: translateY(150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="bg-canvas" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-file-pdf"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="../index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+                <a href="#" class="nav-cta">
+                    <i class="fas fa-shield-halved"></i> 100% Private
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-badge"><i class="fas fa-magic"></i> Instant PDF Editing</div>
+            <h1>Search & Replace.<br><span class="gradient-text">Privacy Protected.</span></h1>
+            <p class="hero-sub">The smartest way to update your lesson plans, certificates, and reports. All processing
+                happens in your browser—your files never leave your device.</p>
+        </section>
+
+        <!-- Tool Section -->
+        <section class="compressor-section">
+            <div class="tool-card">
+                
+                <!-- Initial Drop Zone -->
+                <div id="drop-zone" class="drop-zone">
+                    <div class="drop-zone-inner">
+                        <div class="upload-icon-wrap">
+                            <i class="fas fa-file-import"></i>
+                        </div>
+                        <h2 class="drop-title">Drop your PDF here</h2>
+                        <p class="drop-sub">Securely processed on your computer</p>
+                        <button class="browse-btn" id="browse-trigger">
+                            <i class="fas fa-folder-open"></i> Browse Files
+                        </button>
+                        <input type="file" id="file-input" hidden accept="application/pdf">
+                    </div>
+                </div>
+
+                <!-- Editor View (Hidden until upload) -->
+                <div id="editor-view" class="hidden" style="display: none;">
+                    <div class="pdf-editor-container">
+                        <!-- Sidebar: Rules -->
+                        <div class="editor-sidebar">
+                            <div class="hub-header" style="margin-bottom: 0.5rem;">
+                                <h3 style="font-size: 1.1rem; margin-bottom: 0;">Replacement Rules</h3>
+                            </div>
+                            
+                            <div id="rules-container" style="display: flex; flex-direction: column; gap: 1rem;">
+                                <!-- Rule items will be injected here -->
+                            </div>
+
+                            <button class="add-rule-btn" id="add-rule">
+                                <i class="fas fa-plus-circle"></i> Add Replacement Rule
+                            </button>
+
+                            <div class="action-btns">
+                                <button id="apply-changes" class="nav-cta btn-full" style="border: none; cursor: pointer;">
+                                    <i class="fas fa-wand-sparkles"></i> Apply Changes
+                                </button>
+                                <button id="download-pdf" class="btn-primary btn-full" style="display: none; border: none; cursor: pointer;">
+                                    <i class="fas fa-download"></i> Download Modified PDF
+                                </button>
+                                <button id="reset-tool" class="btn-ghost btn-full" style="border: 1px solid var(--glass-border); padding: 0.8rem; border-radius: 8px;">
+                                    <i class="fas fa-redo"></i> Start Over
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Main: Preview -->
+                        <div class="preview-pane" id="preview-container">
+                            <div class="empty-preview">
+                                <i class="fas fa-file-pdf"></i>
+                                <p>Generating document preview...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Processing Overlay -->
+                <div id="processing-view" class="processing-view hidden" style="display: none;">
+                    <div class="processing-inner">
+                        <div class="pulse-ring"></div>
+                        <div class="spinner-ring"></div>
+                        <i class="fas fa-wand-magic-sparkles spin-icon"></i>
+                        <p class="processing-text">Updating Document<span class="dots"></span></p>
+                        <p class="processing-sub">Running coordinate-aware text replacement</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="features-header">
+                <h2>Why use <span class="gradient-text">PDF Editor</span>?</h2>
+                <p>Designed for educators who value time, security, and professional results.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-lock"></i></div>
+                    <h3>Absolute Privacy</h3>
+                    <p>Your documents are never uploaded to any server. All editing happens locally in your browser memory.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-crosshairs"></i></div>
+                    <h3>Pixel Precision</h3>
+                    <p>Our advanced algorithm finds the exact coordinates of text to ensure replacements align perfectly.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
+                    <h3>Batch Processing</h3>
+                    <p>Update multiple fields at once—perfect for certificates, grading rubrics, and lesson templates.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-check-double"></i></div>
+                    <h3>Zero Installation</h3>
+                    <p>Works instantly on school Chromebooks and restricted devices without needing admin approval.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <div class="logo-icon sm"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <p>&copy; 2026 EduTools Hub. Professional resources for professional educators.</p>
+        </div>
+    </footer>
+
+    <div class="toast" id="success-toast">
+        <i class="fas fa-check-circle"></i>
+        <span>PDF successfully updated!</span>
+    </div>
+
+    <!-- Logic -->
+    <script>
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        let originalBytes = null;
+        let currentPdfName = "";
+        let modifiedBytes = null;
+
+        // UI Elements
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const editorView = document.getElementById('editor-view');
+        const processingView = document.getElementById('processing-view');
+        const rulesContainer = document.getElementById('rules-container');
+        const previewContainer = document.getElementById('preview-container');
+        const downloadBtn = document.getElementById('download-pdf');
+        const applyBtn = document.getElementById('apply-changes');
+        const toast = document.getElementById('success-toast');
+
+        // Setup first rule
+        addRuleRow();
+
+        // --- File Handling ---
+        document.getElementById('browse-trigger').onclick = () => fileInput.click();
+        fileInput.onchange = e => handleUpload(e.target.files[0]);
+        dropZone.ondragover = e => { e.preventDefault(); dropZone.classList.add('dragover'); };
+        dropZone.ondragleave = () => dropZone.classList.remove('dragover');
+        dropZone.ondrop = e => { e.preventDefault(); dropZone.classList.remove('dragover'); handleUpload(e.dataTransfer.files[0]); };
+
+        async function handleUpload(file) {
+            if (!file || file.type !== 'application/pdf') return;
+            currentPdfName = file.name;
+            originalBytes = new Uint8Array(await file.arrayBuffer());
+            
+            dropZone.style.display = 'none';
+            editorView.style.display = 'block';
+            await renderPreview(originalBytes);
+        }
+
+        // --- Rule Management ---
+        function addRuleRow() {
+            const id = Date.now();
+            const div = document.createElement('div');
+            div.className = 'replacement-group';
+            div.innerHTML = `
+                <button class="remove-btn" title="Remove Rule"><i class="fas fa-times"></i></button>
+                <div class="input-stack">
+                    <div class="input-field-wrap">
+                        <label>Find Text</label>
+                        <input type="text" class="custom-input find-val" placeholder="e.g. [STUDENT_NAME]">
+                    </div>
+                    <div class="input-field-wrap">
+                        <label>Replace With</label>
+                        <input type="text" class="custom-input replace-val" placeholder="e.g. John Smith">
+                    </div>
+                </div>
+            `;
+            div.querySelector('.remove-btn').onclick = () => {
+                div.remove();
+                if (rulesContainer.children.length === 0) addRuleRow();
+            };
+            rulesContainer.appendChild(div);
+        }
+
+        document.getElementById('add-rule').onclick = addRuleRow;
+
+        // --- Core Processing ---
+        applyBtn.onclick = async () => {
+            const rules = Array.from(document.querySelectorAll('.replacement-group')).map(g => ({
+                find: g.querySelector('.find-val').value.trim(),
+                replace: g.querySelector('.replace-val').value
+            })).filter(r => r.find);
+
+            if (rules.length === 0) return;
+
+            editorView.style.opacity = '0.3';
+            editorView.style.pointerEvents = 'none';
+            processingView.style.display = 'block';
+
+            try {
+                modifiedBytes = await processPdf(originalBytes, rules);
+                await renderPreview(modifiedBytes);
+                downloadBtn.style.display = 'flex';
+                showToast();
+            } catch (err) {
+                console.error(err);
+                alert("Editing failed: " + err.message);
+            } finally {
+                editorView.style.opacity = '1';
+                editorView.style.pointerEvents = 'all';
+                processingView.style.display = 'none';
+            }
+        };
+
+        async function processPdf(bytes, rules) {
+            const pdfDoc = await PDFDocument.load(bytes);
+            const pdfJs = await pdfjsLib.getDocument({ data: bytes }).promise;
+            const pages = pdfDoc.getPages();
+            const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+            for (let i = 0; i < pages.length; i++) {
+                const page = pages[i];
+                const jsPage = await pdfJs.getPage(i + 1);
+                const textContent = await jsPage.getTextContent();
+
+                for (const item of textContent.items) {
+                    for (const rule of rules) {
+                        if (item.str.includes(rule.find)) {
+                            // Coordinate transformation
+                            const viewport = jsPage.getViewport({ scale: 1 });
+                            const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
+                            
+                            const x = tx[4];
+                            const y = tx[5];
+                            const w = item.width;
+                            const h = item.height || 12;
+
+                            // Redact old text
+                            page.drawRectangle({
+                                x: x, y: y, width: w, height: h,
+                                color: rgb(1, 1, 1)
+                            });
+
+                            // Overlay new text
+                            const fontSize = item.transform[0];
+                            page.drawText(item.str.replace(rule.find, rule.replace), {
+                                x: x, y: y, size: fontSize, font: font, color: rgb(0, 0, 0)
+                            });
+                        }
+                    }
+                }
+            }
+            return await pdfDoc.save();
+        }
+
+        // --- Rendering ---
+        async function renderPreview(bytes) {
+            previewContainer.innerHTML = '';
+            const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+            
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const viewport = page.getViewport({ scale: 1.2 });
+                
+                const canvas = document.createElement('canvas');
+                canvas.className = 'pdf-page-canvas';
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                await page.render({ canvasContext: context, viewport }).promise;
+                previewContainer.appendChild(canvas);
+            }
+        }
+
+        // --- Helpers ---
+        function showToast() {
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        document.getElementById('reset-tool').onclick = () => window.location.reload();
+
+        downloadBtn.onclick = () => {
+            if (!modifiedBytes) return;
+            const blob = new Blob([modifiedBytes], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `updated_${currentPdfName}`;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+    </script>
+</body>
+
+</html>
