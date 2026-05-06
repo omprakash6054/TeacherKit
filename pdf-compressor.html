@@ -9,12 +9,15 @@
         content="Professional-grade PDF compression engine. Advanced structural optimization, image re-encoding, and deep cleaning.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        .hidden { display: none !important; }
-        
+        .hidden {
+            display: none !important;
+        }
+
         .compression-options {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -132,11 +135,14 @@
             <a href="index.html" class="hero-back-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
             <div class="hero-badge"><i class="fas fa-shield-halved"></i> 100% Client-Side · Private & Secure</div>
             <h1>PDF Size.<br><span class="gradient-text">Intelligently Refined.</span></h1>
-            <p class="hero-sub">Reduce PDF file sizes by up to 90% without sacrificing readability. Perfect for email attachments and uploads.</p>
+            <p class="hero-sub">Reduce PDF file sizes by up to 90% without sacrificing readability. Perfect for email
+                attachments and uploads.</p>
             <div class="hero-stats">
-                <div class="hero-stat"><span class="stat-num">90%</span><span class="stat-label">Max Reduction</span></div>
+                <div class="hero-stat"><span class="stat-num">90%</span><span class="stat-label">Max Reduction</span>
+                </div>
                 <div class="hero-stat-divider"></div>
-                <div class="hero-stat"><span class="stat-num">0ms</span><span class="stat-label">Upload Time</span></div>
+                <div class="hero-stat"><span class="stat-num">0ms</span><span class="stat-label">Upload Time</span>
+                </div>
                 <div class="hero-stat-divider"></div>
                 <div class="hero-stat"><span class="stat-num">100%</span><span class="stat-label">Secure</span></div>
             </div>
@@ -154,7 +160,8 @@
                         </div>
                         <h2 class="drop-title">Drop your PDF here</h2>
                         <p class="drop-sub">Fast, local processing · No uploads required</p>
-                        <button class="browse-btn" id="browse-btn" onclick="event.stopPropagation(); document.getElementById('file-input').click()">
+                        <button class="browse-btn" id="browse-btn"
+                            onclick="event.stopPropagation(); document.getElementById('file-input').click()">
                             <i class="fas fa-folder-open"></i> Browse Files
                         </button>
                         <input type="file" id="file-input" hidden accept="application/pdf">
@@ -185,7 +192,15 @@
                             <input type="radio" name="comp-level" value="extreme">
                             <i class="fas fa-bolt-lightning option-icon"></i>
                             <span class="option-title">High Compression</span>
-                            <span class="option-desc">Aggressive reduction. Optimizes images & deep cleans structure.</span>
+                            <span class="option-desc">Aggressive reduction. Optimizes images & deep cleans
+                                structure.</span>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="comp-level" value="ultra">
+                            <i class="fas fa-rocket option-icon"></i>
+                            <span class="option-title">Ultra (Fast & Hybrid)</span>
+                            <span class="option-desc">Rasterizes pages to 300 DPI images. Best for complex files with
+                                links.</span>
                         </label>
                     </div>
 
@@ -206,7 +221,7 @@
                     </div>
                     <p class="processing-text" id="processing-status">Processing PDF</p>
                     <p class="processing-sub" id="processing-sub">Running optimization algorithms...</p>
-                    
+
                     <div class="progress-container">
                         <div class="progress-bar-bg">
                             <div id="progress-bar" class="progress-bar-fill"></div>
@@ -233,11 +248,14 @@
                         </div>
                     </div>
 
-                    <div style="text-align: center; padding: 2rem; background: rgba(0,0,0,0.1); border-radius: 24px; border: 1px solid var(--glass-border);">
-                        <i class="fas fa-circle-check" style="font-size: 4rem; color: var(--success); margin-bottom: 1.5rem;"></i>
+                    <div
+                        style="text-align: center; padding: 2rem; background: rgba(0,0,0,0.1); border-radius: 24px; border: 1px solid var(--glass-border);">
+                        <i class="fas fa-circle-check"
+                            style="font-size: 4rem; color: var(--success); margin-bottom: 1.5rem;"></i>
                         <h2>Optimization Complete!</h2>
-                        <p style="color: var(--text-muted); margin-bottom: 2.5rem;">Your PDF has been successfully optimized and is ready for download.</p>
-                        
+                        <p style="color: var(--text-muted); margin-bottom: 2.5rem;">Your PDF has been successfully
+                            optimized and is ready for download.</p>
+
                         <div class="action-row" style="justify-content: center; gap: 1.5rem;">
                             <button id="new-pdf-btn" class="btn-ghost">
                                 <i class="fas fa-plus"></i> New File
@@ -271,8 +289,11 @@
 
     <!-- Libraries -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
     <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
         const UI = {
             dropZone: document.getElementById('drop-zone'),
             fileInput: document.getElementById('file-input'),
@@ -315,7 +336,7 @@
             activeFile = file;
             document.getElementById('file-name').textContent = file.name;
             document.getElementById('file-size').textContent = formatSize(file.size);
-            
+
             UI.dropZone.classList.add('hidden');
             UI.setupView.classList.remove('hidden');
         }
@@ -348,60 +369,188 @@
             const level = document.querySelector('input[name="comp-level"]:checked').value;
             UI.setupView.classList.add('hidden');
             UI.processingView.classList.remove('hidden');
-            
+
             try {
-                const startTime = performance.now();
                 const arrayBuffer = await activeFile.arrayBuffer();
-                const { PDFDocument, PDFName, PDFRawStream } = PDFLib;
+                let finalBlob;
 
-                updateProgress(10, 'Analysing Document', 'Parsing PDF structure...');
-                const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
-                
-                if (level === 'extreme') {
-                    updateProgress(30, 'Optimising Images', 'Re-encoding high-res assets...');
-                    const objects = pdfDoc.context.enumerateIndirectObjects();
-                    const imageRefs = [];
-                    for (const [ref, obj] of objects) {
-                        if (obj instanceof PDFRawStream && obj.dict.get(PDFName.of('Subtype')) === PDFName.of('Image')) {
-                            imageRefs.push(ref);
-                        }
-                    }
-
-                    for (let i = 0; i < imageRefs.length; i++) {
-                        const progress = 30 + Math.floor((i / imageRefs.length) * 40);
-                        updateProgress(progress, `Optimising Images (${i+1}/${imageRefs.length})`);
-                        const ref = imageRefs[i];
-                        const imageStream = pdfDoc.context.lookup(ref);
-                        try {
-                            const optimizedData = await recompressImage(imageStream);
-                            if (optimizedData) {
-                                imageStream.contents = optimizedData.bytes;
-                                imageStream.dict.set(PDFName.of('Filter'), PDFName.of('DCTDecode'));
-                            }
-                        } catch (e) {}
-                    }
+                if (level === 'ultra') {
+                    finalBlob = await compressUltra(arrayBuffer);
+                } else {
+                    finalBlob = await compressStandard(arrayBuffer, level);
                 }
 
-                updateProgress(80, 'Finalising', 'Deep cleaning structure...');
-                const targetDoc = await PDFDocument.create();
-                const indices = pdfDoc.getPageIndices();
-                const copiedPages = await targetDoc.copyPages(pdfDoc, indices);
-                copiedPages.forEach(p => targetDoc.addPage(p));
-
-                targetDoc.setProducer('EduTools Hub Pro');
-                targetDoc.setCreator('EduTools Hub');
-                
-                const finalBytes = await targetDoc.save({ useObjectStreams: true, addDefaultPage: false });
-                const finalBlob = new Blob([finalBytes], { type: 'application/pdf' });
-                
                 displayResults(finalBlob);
 
             } catch (err) {
                 console.error(err);
-                notifyError('Failed to process PDF.');
+                notifyError('Failed to process PDF: ' + err.message);
                 resetUI();
             }
         };
+
+        async function compressUltra(arrayBuffer) {
+            updateProgress(5, 'Initialising Ultra Engine', 'Loading PDF for rasterization...');
+
+            // Safety: Use compatibility flags for complex files
+            const loadingTask = pdfjsLib.getDocument({
+                data: arrayBuffer,
+                disableAutoFetch: true,
+                disableStream: true,
+                stopAtErrors: false
+            });
+
+            const pdfJsDoc = await loadingTask.promise;
+            const numPages = pdfJsDoc.numPages;
+
+            const { PDFDocument } = PDFLib;
+            const targetDoc = await PDFDocument.create();
+
+            // Optimization: Reuse canvas to save memory and time
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d', { alpha: false });
+
+            // Use 2.0 for Retina-grade clarity (approx 144 DPI)
+            const scale = 2.0;
+
+            for (let i = 1; i <= numPages; i++) {
+                const progress = Math.floor((i / numPages) * 90);
+                updateProgress(progress, `Processing Page ${i}/${numPages}`, 'Generating high-definition hybrid frame...');
+
+                let pageProcessed = false;
+                let currentScale = scale; // Start at 2.0x
+                let attempts = 0;
+
+                while (!pageProcessed && attempts < 2) {
+                    try {
+                        attempts++;
+                        const page = await pdfJsDoc.getPage(i);
+                        let viewport = page.getViewport({ scale: currentScale });
+
+                        // Dynamic safety cap
+                        const MAX_DIMENSION = attempts === 1 ? 4000 : 2000;
+                        if (viewport.width > MAX_DIMENSION || viewport.height > MAX_DIMENSION) {
+                            const capScale = MAX_DIMENSION / Math.max(viewport.width, viewport.height);
+                            viewport = page.getViewport({ scale: currentScale * capScale });
+                        }
+
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+
+                        context.fillStyle = 'white';
+                        context.fillRect(0, 0, canvas.width, canvas.height);
+
+                        // Try rendering with a 45s timeout for the first attempt
+                        const timeoutMs = attempts === 1 ? 45000 : 20000;
+                        await Promise.race([
+                            page.render({ canvasContext: context, viewport: viewport }).promise,
+                            new Promise((_, reject) => setTimeout(() => reject(new Error('Render timeout')), timeoutMs))
+                        ]);
+
+                        const blob = await Promise.race([
+                            new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.90)),
+                            new Promise((_, reject) => setTimeout(() => reject(new Error('Blob timeout')), 10000))
+                        ]);
+
+                        if (!blob) throw new Error('Blob is null');
+
+                        const imgBytes = await blob.arrayBuffer();
+                        const embeddedImg = await targetDoc.embedJpg(imgBytes);
+
+                        const { width, height } = page.getViewport({ scale: 1 });
+                        const newPage = targetDoc.addPage([width, height]);
+                        newPage.drawImage(embeddedImg, {
+                            x: 0,
+                            y: 0,
+                            width: width,
+                            height: height,
+                        });
+
+                        // Link extraction
+                        try {
+                            const annotations = await page.getAnnotations();
+                            const { PDFName, PDFString, PDFArray } = PDFLib;
+                            for (const annot of annotations) {
+                                if (annot.subtype === 'Link' && annot.url) {
+                                    const rect = annot.rect;
+                                    const linkAnnotation = targetDoc.context.obj({
+                                        Type: 'Annot',
+                                        Subtype: 'Link',
+                                        Rect: [rect[0], rect[1], rect[2], rect[3]],
+                                        Border: [0, 0, 0],
+                                        A: { Type: 'Action', S: 'URI', URI: PDFString.of(annot.url) },
+                                    });
+                                    const linkRef = targetDoc.context.register(linkAnnotation);
+                                    const annots = newPage.node.get(PDFName.of('Annots'));
+                                    if (annots instanceof PDFArray) annots.push(linkRef);
+                                    else newPage.node.set(PDFName.of('Annots'), targetDoc.context.obj([linkRef]));
+                                }
+                            }
+                        } catch (e) { }
+
+                        pageProcessed = true;
+
+                    } catch (pageErr) {
+                        if (attempts === 1) {
+                            currentScale = 1.2; // Aggressive fallback for the second attempt
+                            updateProgress(progress, `Retrying Page ${i}/${numPages}`, 'Adjusting resolution for complex layout...');
+                        } else {
+                            console.error(`[Ultra] Page ${i} failed completely.`);
+                        }
+                    }
+                }
+
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                await new Promise(resolve => setTimeout(resolve, 50));
+            }
+
+            updateProgress(95, 'Finalising', 'Polishing file structure...');
+            const finalBytes = await targetDoc.save({ useObjectStreams: true });
+            return new Blob([finalBytes], { type: 'application/pdf' });
+        }
+
+        async function compressStandard(arrayBuffer, level) {
+            const { PDFDocument, PDFName, PDFRawStream } = PDFLib;
+            updateProgress(10, 'Analysing Document', 'Parsing PDF structure...');
+            const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+
+            if (level === 'extreme') {
+                updateProgress(30, 'Optimising Images', 'Re-encoding high-res assets...');
+                const objects = pdfDoc.context.enumerateIndirectObjects();
+                const imageRefs = [];
+                for (const [ref, obj] of objects) {
+                    if (obj instanceof PDFRawStream && obj.dict.get(PDFName.of('Subtype')) === PDFName.of('Image')) {
+                        imageRefs.push(ref);
+                    }
+                }
+
+                for (let i = 0; i < imageRefs.length; i++) {
+                    const progress = 30 + Math.floor((i / imageRefs.length) * 40);
+                    updateProgress(progress, `Optimising Images (${i + 1}/${imageRefs.length})`);
+                    const ref = imageRefs[i];
+                    const imageStream = pdfDoc.context.lookup(ref);
+                    try {
+                        const optimizedData = await recompressImage(imageStream);
+                        if (optimizedData) {
+                            imageStream.contents = optimizedData.bytes;
+                            imageStream.dict.set(PDFName.of('Filter'), PDFName.of('DCTDecode'));
+                        }
+                    } catch (e) { }
+                }
+            }
+
+            updateProgress(80, 'Finalising', 'Deep cleaning structure...');
+            const targetDoc = await PDFDocument.create();
+            const indices = pdfDoc.getPageIndices();
+            const copiedPages = await targetDoc.copyPages(pdfDoc, indices);
+            copiedPages.forEach(p => targetDoc.addPage(p));
+
+            targetDoc.setProducer('EduTools Hub Pro');
+            targetDoc.setCreator('EduTools Hub');
+
+            const finalBytes = await targetDoc.save({ useObjectStreams: true, addDefaultPage: false });
+            return new Blob([finalBytes], { type: 'application/pdf' });
+        }
 
         async function recompressImage(stream) {
             const { PDFName } = PDFLib;
@@ -472,5 +621,7 @@
 
         document.getElementById('toast-close').onclick = () => UI.errorToast.classList.add('hidden');
     </script>
+
 </body>
+
 </html>
