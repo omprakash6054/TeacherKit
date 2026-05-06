@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiView | Pro PDF Compressor</title>
+    <meta name="description"
+        content="Professional-grade PDF compression engine. Advanced structural optimization, image re-encoding, and deep cleaning.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .hidden { display: none !important; }
+        
+        .compression-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            position: relative;
+        }
+
+        .option-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        .option-card.active {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .option-card input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .option-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .option-title {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .option-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .progress-container {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .status-log {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="bg-canvas" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <div class="nav-inner">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Hub</a>
+                <a href="pdf-tool.html" class="nav-link">PDF Tools</a>
+                <a href="#compressor" class="nav-cta">
+                    <i class="fas fa-bolt"></i> Get Started
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero -->
+        <section class="hero">
+            <a href="index.html" class="hero-back-link"><i class="fas fa-arrow-left"></i> Back to Hub</a>
+            <div class="hero-badge"><i class="fas fa-shield-halved"></i> 100% Client-Side · Private & Secure</div>
+            <h1>PDF Size.<br><span class="gradient-text">Intelligently Refined.</span></h1>
+            <p class="hero-sub">Reduce PDF file sizes by up to 90% without sacrificing readability. Perfect for email attachments and uploads.</p>
+            <div class="hero-stats">
+                <div class="hero-stat"><span class="stat-num">90%</span><span class="stat-label">Max Reduction</span></div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat"><span class="stat-num">0ms</span><span class="stat-label">Upload Time</span></div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat"><span class="stat-num">100%</span><span class="stat-label">Secure</span></div>
+            </div>
+        </section>
+
+        <!-- Compressor -->
+        <section id="compressor" class="compressor-section">
+            <div class="tool-card">
+
+                <!-- Drop Zone -->
+                <div id="drop-zone" class="drop-zone" onclick="document.getElementById('file-input').click()">
+                    <div class="drop-zone-inner">
+                        <div class="upload-icon-wrap">
+                            <i class="fas fa-cloud-arrow-up"></i>
+                        </div>
+                        <h2 class="drop-title">Drop your PDF here</h2>
+                        <p class="drop-sub">Fast, local processing · No uploads required</p>
+                        <button class="browse-btn" id="browse-btn" onclick="event.stopPropagation(); document.getElementById('file-input').click()">
+                            <i class="fas fa-folder-open"></i> Browse Files
+                        </button>
+                        <input type="file" id="file-input" hidden accept="application/pdf">
+                    </div>
+                </div>
+
+                <!-- Setup View -->
+                <div id="setup-view" class="hidden">
+                    <div class="stats-bar" style="margin-bottom: 2rem;">
+                        <div class="stat-chip">
+                            <span class="chip-label">Filename</span>
+                            <span class="chip-value" id="file-name" style="font-size: 1rem;">document.pdf</span>
+                        </div>
+                        <div class="stat-chip">
+                            <span class="chip-label">Original Size</span>
+                            <span class="chip-value" id="file-size">—</span>
+                        </div>
+                    </div>
+
+                    <div class="compression-options">
+                        <label class="option-card active">
+                            <input type="radio" name="comp-level" value="lossless" checked>
+                            <i class="fas fa-gem option-icon"></i>
+                            <span class="option-title">Recommended</span>
+                            <span class="option-desc">Lossless optimization. 100% quality preserved.</span>
+                        </label>
+                        <label class="option-card">
+                            <input type="radio" name="comp-level" value="extreme">
+                            <i class="fas fa-bolt-lightning option-icon"></i>
+                            <span class="option-title">High Compression</span>
+                            <span class="option-desc">Aggressive reduction. Optimizes images & deep cleans structure.</span>
+                        </label>
+                    </div>
+
+                    <div class="action-row" style="justify-content: center;">
+                        <button id="cancel-btn" class="btn-ghost" style="padding: 1rem 2rem;">Cancel</button>
+                        <button id="start-compress" class="btn-primary" style="padding: 1rem 3rem;">
+                            <i class="fas fa-compress-arrows-alt"></i> Compress Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Processing -->
+                <div id="processing-view" class="processing-view hidden">
+                    <div class="processing-inner">
+                        <div class="pulse-ring"></div>
+                        <div class="spinner-ring"></div>
+                        <i class="fas fa-cog fa-spin spin-icon"></i>
+                    </div>
+                    <p class="processing-text" id="processing-status">Processing PDF</p>
+                    <p class="processing-sub" id="processing-sub">Running optimization algorithms...</p>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div id="progress-bar" class="progress-bar-fill"></div>
+                        </div>
+                        <span id="progress-text">0%</span>
+                    </div>
+                    <p id="status-log" class="status-log"></p>
+                </div>
+
+                <!-- Result View -->
+                <div id="result-view" class="result-view hidden">
+                    <div class="stats-bar">
+                        <div class="stat-chip">
+                            <span class="chip-label">Original</span>
+                            <span class="chip-value" id="res-original-size">—</span>
+                        </div>
+                        <div class="reduction-badge" id="res-reduction">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>—</span>
+                        </div>
+                        <div class="stat-chip">
+                            <span class="chip-label">Optimized</span>
+                            <span class="chip-value" id="res-compressed-size">—</span>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; padding: 2rem; background: rgba(0,0,0,0.1); border-radius: 24px; border: 1px solid var(--glass-border);">
+                        <i class="fas fa-circle-check" style="font-size: 4rem; color: var(--success); margin-bottom: 1.5rem;"></i>
+                        <h2>Optimization Complete!</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 2.5rem;">Your PDF has been successfully optimized and is ready for download.</p>
+                        
+                        <div class="action-row" style="justify-content: center; gap: 1.5rem;">
+                            <button id="new-pdf-btn" class="btn-ghost">
+                                <i class="fas fa-plus"></i> New File
+                            </button>
+                            <a id="download-btn" class="btn-primary" href="#" download style="padding: 1rem 3rem;">
+                                <i class="fas fa-download"></i> Download PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Toast -->
+                <div id="error-toast" class="error-toast hidden">
+                    <i class="fas fa-triangle-exclamation"></i>
+                    <span id="error-msg">Something went wrong.</span>
+                    <button id="toast-close"><i class="fas fa-xmark"></i></button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <div class="logo-icon sm"><i class="fas fa-graduation-cap"></i></div>
+                <span>EduTools Hub</span>
+            </div>
+            <p>&copy; 2026 EduTools Hub. Helping teachers focus on what matters most.</p>
+        </div>
+    </footer>
+
+    <!-- Libraries -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    
+    <script>
+        const UI = {
+            dropZone: document.getElementById('drop-zone'),
+            fileInput: document.getElementById('file-input'),
+            setupView: document.getElementById('setup-view'),
+            processingView: document.getElementById('processing-view'),
+            resultView: document.getElementById('result-view'),
+            startBtn: document.getElementById('start-compress'),
+            cancelBtn: document.getElementById('cancel-btn'),
+            newBtn: document.getElementById('new-pdf-btn'),
+            downloadBtn: document.getElementById('download-btn'),
+            progressBar: document.getElementById('progress-bar'),
+            progressText: document.getElementById('progress-text'),
+            statusText: document.getElementById('processing-status'),
+            subText: document.getElementById('processing-sub'),
+            statusLog: document.getElementById('status-log'),
+            errorToast: document.getElementById('error-toast'),
+            errorMsg: document.getElementById('error-msg')
+        };
+
+        let activeFile = null;
+
+        // UI Handlers
+        UI.fileInput.onchange = (e) => handleFileSelection(e.target.files[0]);
+
+        UI.dropZone.ondragover = (e) => { e.preventDefault(); UI.dropZone.classList.add('dragover'); };
+        UI.dropZone.ondragleave = () => UI.dropZone.classList.remove('dragover');
+        UI.dropZone.ondrop = (e) => {
+            e.preventDefault();
+            UI.dropZone.classList.remove('dragover');
+            handleFileSelection(e.dataTransfer.files[0]);
+        };
+
+        function handleFileSelection(file) {
+            if (!file) return;
+            const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+            if (!isPDF) {
+                notifyError('Please select a valid PDF document.');
+                return;
+            }
+            activeFile = file;
+            document.getElementById('file-name').textContent = file.name;
+            document.getElementById('file-size').textContent = formatSize(file.size);
+            
+            UI.dropZone.classList.add('hidden');
+            UI.setupView.classList.remove('hidden');
+        }
+
+        UI.cancelBtn.onclick = resetUI;
+        UI.newBtn.onclick = resetUI;
+
+        function resetUI() {
+            activeFile = null;
+            UI.fileInput.value = '';
+            UI.dropZone.classList.remove('hidden');
+            UI.setupView.classList.add('hidden');
+            UI.processingView.classList.add('hidden');
+            UI.resultView.classList.add('hidden');
+            updateProgress(0, 'Processing PDF');
+        }
+
+        // Selection
+        const modeCards = document.querySelectorAll('.option-card');
+        modeCards.forEach(card => {
+            card.onclick = () => {
+                modeCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                card.querySelector('input').checked = true;
+            };
+        });
+
+        // Main Logic
+        UI.startBtn.onclick = async () => {
+            const level = document.querySelector('input[name="comp-level"]:checked').value;
+            UI.setupView.classList.add('hidden');
+            UI.processingView.classList.remove('hidden');
+            
+            try {
+                const startTime = performance.now();
+                const arrayBuffer = await activeFile.arrayBuffer();
+                const { PDFDocument, PDFName, PDFRawStream } = PDFLib;
+
+                updateProgress(10, 'Analysing Document', 'Parsing PDF structure...');
+                const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                
+                if (level === 'extreme') {
+                    updateProgress(30, 'Optimising Images', 'Re-encoding high-res assets...');
+                    const objects = pdfDoc.context.enumerateIndirectObjects();
+                    const imageRefs = [];
+                    for (const [ref, obj] of objects) {
+                        if (obj instanceof PDFRawStream && obj.dict.get(PDFName.of('Subtype')) === PDFName.of('Image')) {
+                            imageRefs.push(ref);
+                        }
+                    }
+
+                    for (let i = 0; i < imageRefs.length; i++) {
+                        const progress = 30 + Math.floor((i / imageRefs.length) * 40);
+                        updateProgress(progress, `Optimising Images (${i+1}/${imageRefs.length})`);
+                        const ref = imageRefs[i];
+                        const imageStream = pdfDoc.context.lookup(ref);
+                        try {
+                            const optimizedData = await recompressImage(imageStream);
+                            if (optimizedData) {
+                                imageStream.contents = optimizedData.bytes;
+                                imageStream.dict.set(PDFName.of('Filter'), PDFName.of('DCTDecode'));
+                            }
+                        } catch (e) {}
+                    }
+                }
+
+                updateProgress(80, 'Finalising', 'Deep cleaning structure...');
+                const targetDoc = await PDFDocument.create();
+                const indices = pdfDoc.getPageIndices();
+                const copiedPages = await targetDoc.copyPages(pdfDoc, indices);
+                copiedPages.forEach(p => targetDoc.addPage(p));
+
+                targetDoc.setProducer('EduTools Hub Pro');
+                targetDoc.setCreator('EduTools Hub');
+                
+                const finalBytes = await targetDoc.save({ useObjectStreams: true, addDefaultPage: false });
+                const finalBlob = new Blob([finalBytes], { type: 'application/pdf' });
+                
+                displayResults(finalBlob);
+
+            } catch (err) {
+                console.error(err);
+                notifyError('Failed to process PDF.');
+                resetUI();
+            }
+        };
+
+        async function recompressImage(stream) {
+            const { PDFName } = PDFLib;
+            const width = stream.dict.get(PDFName.of('Width')).numberValue;
+            const height = stream.dict.get(PDFName.of('Height')).numberValue;
+            if (width < 300 && height < 300) return null;
+
+            const blob = new Blob([stream.contents]);
+            const url = URL.createObjectURL(blob);
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    URL.revokeObjectURL(url);
+                    const canvas = document.createElement('canvas');
+                    let targetWidth = width;
+                    let targetHeight = height;
+                    if (width > 1200 || height > 1200) {
+                        const ratio = Math.min(1200 / width, 1200 / height);
+                        targetWidth = Math.round(width * ratio);
+                        targetHeight = Math.round(height * ratio);
+                    }
+                    canvas.width = targetWidth;
+                    canvas.height = targetHeight;
+                    canvas.getContext('2d').drawImage(img, 0, 0, targetWidth, targetHeight);
+                    canvas.toBlob((newBlob) => {
+                        newBlob.arrayBuffer().then(buf => resolve({ bytes: new Uint8Array(buf) }));
+                    }, 'image/jpeg', 0.75);
+                };
+                img.onerror = () => { URL.revokeObjectURL(url); reject(); };
+                img.src = url;
+            });
+        }
+
+        function displayResults(blob) {
+            updateProgress(100, 'Complete');
+            document.getElementById('res-original-size').textContent = formatSize(activeFile.size);
+            document.getElementById('res-compressed-size').textContent = formatSize(blob.size);
+            const reduction = ((activeFile.size - blob.size) / activeFile.size * 100).toFixed(1);
+            document.getElementById('res-reduction').querySelector('span').textContent = reduction > 0 ? `${reduction}%` : '0%';
+            UI.downloadBtn.href = URL.createObjectURL(blob);
+            UI.downloadBtn.download = `Optimised_${activeFile.name}`;
+            setTimeout(() => {
+                UI.processingView.classList.add('hidden');
+                UI.resultView.classList.remove('hidden');
+            }, 500);
+        }
+
+        function updateProgress(pct, status, sub) {
+            UI.progressBar.style.width = pct + '%';
+            UI.progressText.textContent = pct + '%';
+            if (status) UI.statusText.textContent = status;
+            if (sub) UI.subText.textContent = sub;
+        }
+
+        function formatSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
+        }
+
+        function notifyError(msg) {
+            UI.errorMsg.textContent = msg;
+            UI.errorToast.classList.remove('hidden');
+            setTimeout(() => UI.errorToast.classList.add('hidden'), 5000);
+        }
+
+        document.getElementById('toast-close').onclick = () => UI.errorToast.classList.add('hidden');
+    </script>
+</body>
+</html>

@@ -16,8 +16,15 @@ const tools = [
         name: 'PDF Merger/Splitter',
         description: 'Combine handouts fast. Split large documents into manageable sections.',
         category: 'Quick Content Creation',
-        icon: 'fa-file-pdf',
+        icon: 'fa-layer-group',
         link: 'pdf-tool.html'
+    },
+    {
+        name: 'PDF Compressor',
+        description: 'Reduce file size without losing quality. Optimise PDFs for sharing.',
+        category: 'Quick Content Creation',
+        icon: 'fa-file-pdf',
+        link: 'pdf-compressor.html'
     },
     {
         name: 'QR Code Generator',
