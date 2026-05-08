@@ -98,13 +98,7 @@ const tools = [
         icon: 'fa-table',
         link: 'rubric-generator.html'
     },
-    {
-        name: 'Flashcard Generator',
-        description: 'Interactive revision. Create and flip digital cards for study sessions.',
-        category: 'Assessment & Grading',
-        icon: 'fa-clone',
-        link: 'flashcard-generator.html'
-    },
+
 
     // Planning & Organisation
     {
