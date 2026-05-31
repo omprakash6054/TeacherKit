@@ -63,8 +63,9 @@ open index.html
 For the image/PDF compression tools, a local server is recommended:
 
 ```bash
-npx serve .
+npm install
 ```
+npm run dev
 
 ---
 
