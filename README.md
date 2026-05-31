@@ -66,7 +66,7 @@ For the image/PDF compression tools, a local server is recommended:
 npm install
 ```
 npm run dev
-
+```
 ---
 
 ## 🤝 Contributing
