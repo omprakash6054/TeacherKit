@@ -1,6 +1,6 @@
 # 🧰 TeacherKit
 
-> A growing collection of free, browser-based tools built for teachers and classrooms — no installs, no logins, no fuss.
+> A growing collection of free, browser-based tools built for teachers and classrooms: no installs, no logins, no fuss.
 
 ---
 
@@ -50,11 +50,11 @@
 
 ## 🛠️ Getting Started
 
-All tools run entirely in the browser — just open `index.html` or navigate directly to any `.html` file.
+All tools run entirely in the browser - just open `index.html` or navigate directly to any `.html` file.
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/teacherkit.git
+git clone https://github.com/omprakash6054/teacherkit.git
 
 # Open in browser
 open index.html
